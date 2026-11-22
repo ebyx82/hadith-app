@@ -82,10 +82,63 @@ def search(q, lang, srcs, offset=0, limit=PAGE):
     db.close()
     return total, out
 
+DB = None
+
+def q(sql, args=()):
+    global DB
+    if DB is None:
+        DB = sqlite3.connect("hadith.db", check_same_thread=False); DB.row_factory = sqlite3.Row
+    return [dict(r) for r in DB.execute(sql, args).fetchall()]
+
+def api_surahs(p):
+    return q("SELECT n,ar,ru,en,count,type FROM surahs ORDER BY n")
+
+def api_surah(p):
+    n = int(p.get("n", 1)); lang = p.get("lang", "ru")
+    info = q("SELECT n,ar,ru,en,count,type FROM surahs WHERE n=?", (n,))
+    ayahs = {}
+    for r in q("SELECT num,lang,text FROM docs WHERE kind='quran' AND sec=? AND lang IN ('ar',?) ORDER BY num", (n, lang)):
+        a = ayahs.setdefault(int(r["num"]), {"a": int(r["num"])})
+        a["ar" if r["lang"] == "ar" else "tr"] = r["text"]
+    return {"info": info[0] if info else None, "ayahs": [ayahs[k] for k in sorted(ayahs)]}
+
+def api_chapters(p):
+    src = NAME.get(p.get("src")); lang = p.get("lang", "ru"); names = {}
+    for l in dict.fromkeys([lang, "en", "ar"]):
+        for r in q("SELECT sec,name FROM sections WHERE source=? AND lang=?", (src, l)):
+            names.setdefault(r["sec"], r["name"])
+    rows = q("SELECT sec, COUNT(*) c FROM docs WHERE source=? AND lang='ar' AND sec IS NOT NULL GROUP BY sec ORDER BY sec", (src,))
+    return [{"sec": r["sec"], "name": names.get(r["sec"], f"Раздел {r['sec']}"), "count": r["c"]} for r in rows]
+
+def api_hadiths(p):
+    src = NAME.get(p.get("src")); lang = p.get("lang", "ru"); page = max(0, int(p.get("page", 0))); size = 20
+    where, args = "kind='hadith' AND source=? AND lang='ar'", [src]
+    if p.get("sec", "").isdigit(): where += " AND sec=?"; args.append(int(p["sec"]))
+    if p.get("num"): where += " AND key=?"; args.append("№" + p["num"].strip())
+    total = q(f"SELECT COUNT(*) c FROM docs WHERE {where}", args)[0]["c"]
+    rows = q(f"SELECT ref,key,grade,text FROM docs WHERE {where} ORDER BY num LIMIT ? OFFSET ?", args + [size, page * size])
+    items = []
+    for r in rows:
+        it = dict(ref=r["ref"], ar=r["text"], grade=r["grade"], url=make_url("hadith", src, r["ref"]))
+        for l in dict.fromkeys([lang, "en"]):
+            t = q("SELECT text,grade FROM docs WHERE kind='hadith' AND source=? AND lang=? AND key=?", (src, l, r["key"]))
+            if t:
+                it["tr"], it["trlang"] = t[0]["text"], l
+                it["grade"] = it["grade"] or t[0]["grade"]
+                break
+        items.append(it)
+    return {"total": total, "page_size": size, "items": items}
+
+API = {"/api/surahs": api_surahs, "/api/surah": api_surah, "/api/chapters": api_chapters, "/api/hadiths": api_hadiths}
+
 class H(BaseHTTPRequestHandler):
     def do_GET(self):
         u = urlparse(self.path)
-        if u.path == "/api/search":
+        if u.path in API:
+            try: res = API[u.path]({k: v[0] for k, v in parse_qs(u.query).items()})
+            except Exception as e: res = {"error": str(e)}
+            body, ct = json.dumps(res, ensure_ascii=False).encode(), "application/json; charset=utf-8"
+        elif u.path == "/api/search":
             p = parse_qs(u.query)
             srcs = [x for x in p.get("src", [""])[0].split(",") if x]
             total, rows = search(p.get("q", [""])[0], p.get("lang", ["ru"])[0], srcs, int(p.get("offset", ["0"])[0]))

@@ -111,7 +111,72 @@ main{max-width:780px;margin:-48px auto 0;padding:0 16px 48px;position:relative}
 body.pre .hero,body.pre .hero *,body.pre .box,body.pre .hero::before{animation-play-state:paused!important}
 footer{text-align:center;color:var(--mu);font-size:13px;margin-top:36px}
 @media(max-width:520px){.go{padding:10px 14px}.bism{font-size:28px}}
-</style></head><body class="pre">
+
+/* ===== приложение ===== */
+.mu{color:var(--mu)}
+#bar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:6px;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top));background:linear-gradient(160deg,var(--ac2),#1f6f50);color:#fff;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+#bar[hidden]{display:none}
+#bar .bk{color:#fff;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:0;background:transparent;cursor:pointer}
+#bar .bk:hover{background:rgba(255,255,255,.14)}
+#bar h2{font:600 18px Lora,Georgia,serif;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v{padding-bottom:96px}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px}
+#nav{position:fixed;bottom:0;left:0;right:0;z-index:60;display:flex;background:var(--card);border-top:1px solid var(--bd);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+#nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--mu);text-decoration:none;font:500 11px Inter,sans-serif;padding:4px 0;transition:.2s}
+#nav a.on{color:var(--ac)}#nav a.on svg{transform:translateY(-2px) scale(1.1)}
+.ico{width:22px;height:22px;flex:none;transition:.2s}
+.hero{padding-top:calc(44px + env(safe-area-inset-top))}
+.pc{margin-top:-56px;background:var(--card);border:1px solid var(--bd);border-radius:20px;box-shadow:var(--sh);padding:16px 18px;cursor:pointer;position:relative;animation:up .6s ease .2s backwards}
+.pc-h{display:flex;align-items:center;gap:8px;color:var(--mu);font-size:14px}.pc-h .ico{width:18px;height:18px}
+.pt{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:4px}
+.pn{font:600 26px Lora,Georgia,serif}.pt b{font:600 34px Inter,sans-serif;color:var(--ac)}.pt span{color:var(--mu)}
+.prow{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px}
+.prow div{text-align:center;padding:8px 2px;border-radius:12px;background:var(--bg);font-size:12px;color:var(--mu)}
+.prow div b{display:block;font:600 15px Inter,sans-serif;color:var(--fg)}
+.prow .nx{background:var(--ac);color:rgba(255,255,255,.85)}.prow .nx b{color:#fff}
+.qc{display:flex;align-items:center;gap:14px;margin-top:12px;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px 16px;cursor:pointer;box-shadow:var(--sh);animation:up .6s ease .3s backwards}
+.qc div{flex:1;display:flex;flex-direction:column}.qc span{color:var(--mu);font-size:13px}.qc>.ico{color:var(--ac)}
+.kb{width:40px;height:40px;flex:none}
+.hs{font:600 17px Lora,Georgia,serif;margin:26px 2px 10px;color:var(--ac)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:flex;flex-direction:column;gap:6px;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;text-decoration:none;color:var(--fg);box-shadow:var(--sh);transition:transform .2s;animation:up .5s ease backwards;animation-delay:calc(var(--i,0)*50ms)}
+.tile:hover{transform:translateY(-3px)}.tile:active{transform:scale(.97)}
+.ti{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--tc,var(--ac)) 14%,transparent);color:var(--tc,var(--ac))}
+.tile b{font:600 15px Inter,sans-serif}.ta{font:400 21px Amiri,serif;color:var(--mu);direction:rtl}
+.tile.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:14px}.tile.wide .tx{flex:1;display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin-top:10px;text-decoration:none;color:var(--fg);transition:.2s}
+.row:hover{border-color:var(--ac);transform:translateX(2px)}
+.nb{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:12px;background:color-mix(in srgb,var(--ac) 12%,transparent);color:var(--ac);font:600 14px Inter,sans-serif}
+.row .mid{flex:1;min-width:0}.row .mid b{display:block;font-weight:600}.row .mid span{color:var(--mu);font-size:13px}
+.row .ra{font:400 24px Amiri,serif;direction:rtl}
+.fi{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--fg);font:inherit;margin-top:12px}
+.jump{display:flex;gap:8px;align-items:flex-end}.jump .fi{flex:1}.jump .go{height:46px}
+.sh{text-align:center;padding:22px 12px 4px}.sh .ar{font:700 36px/1.6 Amiri,serif;color:var(--gold)}.sh .ru{font:600 21px Lora,Georgia,serif}.sh .mu{font-size:14px}
+.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin:14px 0 4px}
+.ctl select{padding:9px 10px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--fg);font:inherit;font-size:14px;max-width:100%}
+.pa{display:inline-flex;align-items:center;gap:8px}.pa .ico{width:18px;height:18px;fill:currentColor}
+.bs{text-align:center;font:400 32px/2 Amiri,serif;color:var(--gold);margin-top:10px}
+.ay{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px 16px;margin-top:12px;transition:.3s}
+.ay.playing{border-color:var(--gold);box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 25%,transparent)}
+.ay .hd{display:flex;align-items:center;gap:8px}
+.no{min-width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac);font:600 13px Inter,sans-serif}
+.pl{margin-left:auto;width:38px;height:38px;border-radius:50%;border:0;background:var(--ac);color:#fff;display:grid;place-items:center;cursor:pointer}
+.pl .ico{width:18px;height:18px;fill:currentColor}
+.ay .ar{direction:rtl;text-align:right;font:400 29px/2.1 Amiri,serif;margin-top:4px}
+.ay .tr{margin-top:8px;padding-top:10px;border-top:1px dashed var(--bd)}
+.tr2{border-top:1px dashed var(--bd);margin-top:10px;padding-top:10px}
+.cmpw{display:flex;justify-content:center;margin-top:18px}.cmp{width:min(86vw,340px);height:auto}
+.cr{fill:var(--card);stroke:var(--bd);stroke-width:2}
+.tk{stroke:var(--mu);stroke-width:1.5}.tk.m{stroke:var(--fg);stroke-width:2.5}
+.cl{font:600 16px Inter,sans-serif;fill:var(--fg);text-anchor:middle;dominant-baseline:central}.cl.n{fill:#c0392b}
+.ql{stroke:var(--gold);stroke-width:3;stroke-dasharray:5 5}.ptr{fill:var(--ac)}
+.cmp.ok .cr{stroke:var(--ac);stroke-width:6}
+.qi{text-align:center;margin-top:10px}.qi b{font:600 40px Inter,sans-serif;color:var(--ac);display:block}
+.pr{display:flex;justify-content:space-between;padding:10px 6px;border-bottom:1px solid var(--bd)}.pr:last-child{border:0}.pr.nx{color:var(--ac);font-weight:600}
+.row2{display:flex;gap:8px}.row2 .fi{flex:1;min-width:0}
+.chk{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:15px}
+</style></head>
+<body class="pre">
 <div id="splash" aria-hidden="true">
  <svg class="sp-logo" viewBox="0 0 100 100"><g class="sp-star" fill="#d8b45e"><rect x="28" y="28" width="44" height="44"/><rect x="28" y="28" width="44" height="44" transform="rotate(45 50 50)"/></g>
   <circle cx="50" cy="50" r="13.5" fill="#0f3d2e"/><circle cx="50" cy="50" r="8.5" fill="#d8b45e"/><circle cx="53" cy="49.5" r="7" fill="#0f3d2e"/></svg>
@@ -120,88 +185,210 @@ footer{text-align:center;color:var(--mu);font-size:13px;margin-top:36px}
  <div class="sp-bar"><i></i></div><div class="sp-l">Загрузка…</div>
 </div>
 
-<header class="hero"><div class="bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
-<h1>Поиск по Корану и Сунне</h1><p class="sub">Введите тему и получите аяты и хадисы из достоверных сборников</p></header>
-<main>
-<div class="box">
- <div class="bar">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-  <input id="q" placeholder="Тема, например: терпение, родители, милостыня" autocomplete="off" onkeydown="if(event.key=='Enter')go()">
-  <button class="ic" id="mic" type="button" title="Голосовой ввод" aria-label="Голосовой ввод" onclick="listen()">
-   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
-  </button>
-  <button class="go" onclick="go()">Найти</button>
- </div>
- <div class="chips">
-  <div class="seg" id="lg"><button data-v="ru" class="act">Русский</button><button data-v="en">English</button><button data-v="ar">العربية</button></div>
-  </div>
- <div class="books" id="bk"><span class="bl">Книги:</span>
-  <button data-v="" class="act">Все</button><button data-v="quran">Коран</button><button data-v="bukhari">Бухари</button><button data-v="muslim">Муслим</button><button data-v="abudawud">Абу Дауд</button><button data-v="tirmidhi">Тирмизи</button><button data-v="nasai">Насаи</button><button data-v="ibnmajah">Ибн Маджа</button>
- </div>
-</div>
-<div id="out"></div>
-<footer>Тексты: hadith-api и alquran.cloud · Для фикха обращайтесь к учёным</footer>
-</main>
+<header id="bar" hidden></header>
+<div id="v"></div>
+<nav id="nav"></nav>
 <script>
 const $=id=>document.getElementById(id);
-const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fx=s=>esc(s).replace(/ﷺ/g,'<span class="sal">ﷺ</span>');
-function tg(b){const w=b.nextElementSibling;const o=w.classList.toggle('open');b.textContent=o?'Арабский текст ▴':'Арабский текст ▾'}
-let L='ru';const S=new Set();
-function seg(id,set){$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;
- [...$(id).children].forEach(x=>x.classList.toggle('act',x===b));set(b.dataset.v);if(q.value.trim())go()}}
-seg('lg',v=>L=v);
-$('bk').onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v;
- if(!v)S.clear();else S.has(v)?S.delete(v):S.add(v);
- [...$('bk').querySelectorAll('button')].forEach(x=>x.classList.toggle('act',x.dataset.v?S.has(x.dataset.v):S.size==0));
- if(q.value.trim())go()};
+const store={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const api=async u=>{const r=await fetch(u);if(!r.ok)throw new Error(r.status);return r.json()};
+const IC={home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+ quran:'<path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2z"/><path d="M12 6v14"/>',
+ book:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+ back:'<path d="M15 5l-7 7 7 7"/>',play:'<path d="M8 5l11 7-11 7z"/>',
+ pause:'<rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/>'};
+const ic=n=>`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const KAABA='<svg class="kb" viewBox="0 0 40 40"><rect x="6" y="6" width="28" height="28" rx="4" fill="#161616"/><rect x="6" y="14" width="28" height="4" fill="#d8b45e"/></svg>';
+const ERR='<p class="info">Не удалось загрузить данные. Проверьте интернет и повторите.</p>';
+const SK='<div class="wrap"><div class="sk"></div><div class="sk"></div><div class="sk"></div></div>';
+const BOOKS=[['bukhari','Сахих аль-Бухари','صحيح البخاري'],['muslim','Сахих Муслим','صحيح مسلم'],['abudawud','Сунан Абу Дауда','سنن أبي داود'],['tirmidhi','Джами ат-Тирмизи','جامع الترمذي'],['nasai','Сунан ан-Насаи','سنن النسائي'],['ibnmajah','Сунан Ибн Маджи','سنن ابن ماجه']];
+const TL=()=>store.get('tl','ru');
+const V=$('v'),BAR=$('bar');
 
+/* ---------- каркас и маршрутизация ---------- */
+const NAV=[['#/','home','Главная'],['#/quran','quran','Коран'],['#/hadith','book','Хадисы'],['#/search','search','Поиск'],['#/prayer','clock','Намаз']];
+$('nav').innerHTML=NAV.map(([h,i,t])=>`<a href="${h}" data-h="${h}">${ic(i)}<span>${t}</span></a>`).join('');
+function setNav(){const h=location.hash||'#/';document.querySelectorAll('#nav a').forEach(a=>{const k=a.dataset.h;a.classList.toggle('on',k=='#/'?(h=='#/'||h=='#'||h==''):(h.startsWith(k)||(k=='#/hadith'&&h.startsWith('#/books'))||(k=='#/prayer'&&h.startsWith('#/qibla'))))})}
+function bar(title,back){BAR.hidden=title==null;if(title==null)return;BAR.innerHTML=`<button class="bk" onclick="location.hash='${back||'#/'}'" aria-label="Назад">${ic('back')}</button><h2>${esc(title)}</h2>`}
+const ROUTES=[[/^#\/quran\/(\d+)$/,m=>viewSurah(+m[1])],[/^#\/quran$/,()=>viewQuran()],[/^#\/books\/(\w+)\/(\w+)$/,m=>viewList(m[1],m[2])],[/^#\/books\/(\w+)$/,m=>viewBook(m[1])],[/^#\/hadith$/,()=>viewHadith()],[/^#\/search$/,()=>viewSearch()],[/^#\/qibla$/,()=>viewQibla()],[/^#\/prayer$/,()=>viewPrayer()]];
+let TK=0;
+function route(){stopAudio();stopCompass();clearInterval(TK);const h=location.hash;let f=()=>viewHome();for(const[r,fn]of ROUTES){const m=r.exec(h);if(m){f=()=>fn(m);break}}window.scrollTo(0,0);setNav();f()}
+addEventListener('hashchange',route);
+
+/* ---------- общие элементы ---------- */
+function pager(page,total,size,fn){const pages=Math.ceil(total/size);if(pages<2)return '';const nums=new Set([0,pages-1]);for(let i=page-2;i<=page+2;i++)if(i>=0&&i<pages)nums.add(i);const list=[...nums].sort((a,b)=>a-b);
+ const b=(n,t,c,d)=>`<button class="${c||''}" ${d||''} onclick="${fn.replace('%n',n)}">${t}</button>`;let h=b(page-1,'‹','',page==0?'disabled':''),prev=-1;
+ for(const n of list){if(n-prev>1)h+='<span>…</span>';h+=b(n,n+1,n==page?'cur':'');prev=n}return `<div class="pg">${h}${b(page+1,'›','',page==pages-1?'disabled':'')}</div>`}
+function gcls(g){g=(g||'').toLowerCase();return g.includes('sahih')||g.includes('صحيح')?'s':(g.includes('daif')||g.includes("da'if")||g.includes('ضعيف')?'d':'')}
+let ITEMS=[];
+function cp(i,b){const x=ITEMS[i];navigator.clipboard.writeText(`${x.ar?x.ar+'\n':''}${x.tr||x.text||''}\n— ${x.src||x.source||''}, ${x.ref}`).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)})}
+const lk=x=>x.url?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">Проверить на ${x.kind=='quran'?'quran.com':'sunnah.com'} ↗</a>`:'';
+
+/* ---------- ГЛАВНАЯ ---------- */
+function viewHome(){
+ bar(null);
+ const tiles=BOOKS.map(([s,n,a],i)=>`<a class="tile" style="--i:${i+2};--tc:${i%2?'var(--gold)':'var(--ac)'}" href="#/books/${s}"><div class="ti">${ic('book')}</div><b>${n}</b><span class="ta">${a}</span></a>`).join('');
+ V.innerHTML=`<header class="hero"><div class="bism">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div><h1>Коран и Сунна</h1><p class="sub" id="dt"></p></header>
+ <div class="wrap"><div class="pc" id="pc" onclick="location.hash='#/prayer'"></div>
+ <div class="qc" onclick="location.hash='#/qibla'">${KAABA}<div><b>Кибла</b><span id="qd">Направление на Каабу</span></div>${ic('compass')}</div>
+ <h3 class="hs">Священный Коран</h3>
+ <div class="grid"><a class="tile wide" href="#/quran" style="--i:1"><div class="ti">${ic('quran')}</div><div class="tx"><b>Коран</b><span class="mu" style="font-size:13px">114 сур · арабский, перевод, аудио</span></div><span class="ta">القرآن الكريم</span></a></div>
+ <h3 class="hs">Книги хадисов</h3><div class="grid">${tiles}</div>
+ <h3 class="hs">Инструменты</h3><div class="grid"><a class="tile wide" href="#/search" style="--i:9"><div class="ti" style="--tc:var(--gold)">${ic('search')}</div><div class="tx"><b>Поиск по темам</b><span class="mu" style="font-size:13px">аяты и хадисы по теме, голосовой ввод</span></div></a></div></div>`;
+ $('dt').textContent=new Date().toLocaleDateString('ru',{weekday:'long',day:'numeric',month:'long'});
+ paintPrayer();const l=LOC();if(l)$('qd').textContent=Math.round(qiblaBearing(+l.lat,+l.lng))+'° от севера · открыть компас';
+}
+
+/* ---------- ВРЕМЯ НАМАЗА ---------- */
+const PN=[['Fajr','Фаджр'],['Sunrise','Восход'],['Dhuhr','Зухр'],['Asr','Аср'],['Maghrib','Магриб'],['Isha','Иша']],PNR=Object.fromEntries(PN);
+const HM=['Мухаррам','Сафар','Раби аль-авваль','Раби ас-сани','Джумада аль-уля','Джумада ас-сания','Раджаб','Шаабан','Рамадан','Шавваль','Зуль-када','Зуль-хиджа'];
+const METHODS=[['3','Всемирная исламская лига (MWL)'],['14','ДУМ России'],['13','Диянет (Турция)'],['2','ISNA (Северная Америка)'],['5','Египет'],['4','Умм аль-Кура (Мекка)'],['1','Университет Карачи'],['12','Франция (UOIF)']];
+const PS=()=>store.get('ps',{method:3,school:0}),LOC=()=>store.get('loc',null);
+const hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const left=s=>{const h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h} ч ${m} мин`:`${m} мин ${String(s%60).padStart(2,'0')} с`};
+function nowIn(tz){try{const f=new Intl.DateTimeFormat('en-GB',{timeZone:tz||undefined,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});const o={};f.formatToParts(new Date()).forEach(p=>o[p.type]=p.value);return{y:+o.year,m:+o.month,d:+o.day,min:(+o.hour%24)*60+ +o.minute,sec:+o.second}}catch(e){if(tz)return nowIn();throw e}}
+function locate(){return new Promise(res=>{if(!navigator.geolocation){alert('Определение местоположения недоступно на этом устройстве.');return res(false)}
+ navigator.geolocation.getCurrentPosition(p=>{store.set('loc',{lat:p.coords.latitude,lng:p.coords.longitude,label:'Моё местоположение'});res(true)},()=>{alert('Не удалось определить местоположение. Разрешите доступ в настройках браузера или введите город на странице «Намаз».');res(false)},{timeout:15000,maximumAge:600000})})}
+async function getTimes(dt){const loc=LOC(),ps=PS(),key=`pt:${dt.y}-${dt.m}-${dt.d}:${(+loc.lat).toFixed(2)},${(+loc.lng).toFixed(2)}:${ps.method}:${ps.school}`;
+ const c=store.get(key,null);if(c)return c;
+ const ds=`${String(dt.d).padStart(2,'0')}-${String(dt.m).padStart(2,'0')}-${dt.y}`;
+ const j=await api(`https://api.aladhan.com/v1/timings/${ds}?latitude=${loc.lat}&longitude=${loc.lng}&method=${ps.method}&school=${ps.school}`);
+ const t={};PN.forEach(([k])=>{const m=/(\d{1,2}):(\d{2})/.exec(j.data.timings[k]||'');if(m)t[k]=+m[1]*60+ +m[2]});
+ const h=j.data.date&&j.data.date.hijri;
+ const out={t,tz:j.data.meta&&j.data.meta.timezone,hijri:h?`${h.day} ${HM[(+h.month.number||1)-1]} ${h.year} г.х.`:''};store.set(key,out);return out}
+async function nextPrayer(){const loc=LOC();let n=nowIn(loc.tz);const today=await getTimes(n);
+ if(today.tz&&today.tz!==loc.tz){loc.tz=today.tz;store.set('loc',loc);n=nowIn(today.tz)}
+ const s=n.min*60+n.sec;
+ for(const k of['Fajr','Dhuhr','Asr','Maghrib','Isha'])if(today.t[k]!=null&&today.t[k]*60>s)return{k,at:today.t[k],left:today.t[k]*60-s,today};
+ const d=new Date(Date.UTC(n.y,n.m-1,n.d+1));const tm=await getTimes({y:d.getUTCFullYear(),m:d.getUTCMonth()+1,d:d.getUTCDate()});
+ return{k:'Fajr',at:tm.t.Fajr,left:86400-s+tm.t.Fajr*60,today,tomorrow:true}}
+let TGT=0;
+async function paintPrayer(){const el=$('pc');if(!el)return;
+ if(!LOC()){el.innerHTML=`<div class="pc-h">${ic('clock')} Время намаза</div><p class="mu" style="margin:8px 0 12px">Определите местоположение, чтобы увидеть время намаза и направление киблы.</p><button class="go" onclick="event.stopPropagation();locate().then(ok=>ok&&route())">Определить местоположение</button>`;return}
+ el.innerHTML=`<div class="pc-h">${ic('clock')} Загрузка времени намаза…</div>`;
+ try{const n=await nextPrayer();if(!$('pc'))return;TGT=Date.now()+n.left*1000;const t=n.today.t;
+  el.innerHTML=`<div class="pc-h">${ic('clock')} Следующая молитва${n.tomorrow?' · завтра':''}</div><div class="pt"><div class="pn">${PNR[n.k]}</div><b>${hm(n.at)}</b><span id="cd"></span></div>
+  <div class="prow">${['Fajr','Dhuhr','Asr','Maghrib','Isha'].map(k=>`<div class="${k==n.k?'nx':''}">${PNR[k]}<b>${k==n.k&&n.tomorrow?hm(n.at):(t[k]!=null?hm(t[k]):'—')}</b></div>`).join('')}</div>`;
+  if($('dt')&&n.today.hijri)$('dt').textContent=new Date().toLocaleDateString('ru',{weekday:'long',day:'numeric',month:'long'})+' · '+n.today.hijri;
+  if($('plist'))$('plist').innerHTML=(n.today.hijri?`<p class="mu" style="margin:0 0 6px">${n.today.hijri}</p>`:'')+PN.map(([k,r])=>`<div class="pr ${k==n.k&&!n.tomorrow?'nx':''}"><span>${r}</span><b>${t[k]!=null?hm(t[k]):'—'}</b></div>`).join('');
+  tick();clearInterval(TK);TK=setInterval(tick,1000)}
+ catch(e){el.innerHTML=`<div class="pc-h">${ic('clock')} Время намаза</div><p class="mu" style="margin:8px 0 12px">Не удалось получить время намаза. Проверьте интернет.</p><button class="go" onclick="event.stopPropagation();paintPrayer()">Повторить</button>`}}
+function tick(){const c=$('cd');if(!c){clearInterval(TK);return}const s=Math.round((TGT-Date.now())/1000);if(s<=0){clearInterval(TK);setTimeout(paintPrayer,1500);return}c.textContent='через '+left(s)}
+function viewPrayer(){bar('Время намаза');const ps=PS(),loc=LOC();
+ V.innerHTML=`<div class="wrap"><div class="pc" id="pc" style="margin-top:16px;cursor:default"></div><div class="box" style="margin-top:14px"><div id="plist"></div></div>
+ <div class="box" style="margin-top:14px"><b>Местоположение</b><p class="mu" style="margin:4px 0 10px">${loc?esc(loc.label||'')+(loc.tz?' · '+esc(loc.tz):''):'не задано'}</p>
+ <button class="go" onclick="locate().then(ok=>ok&&viewPrayer())">Определить автоматически</button>
+ <div class="row2"><input class="fi" id="city" placeholder="Город"><input class="fi" id="ctry" placeholder="Страна, напр. Belgium"></div><button class="go" style="margin-top:10px" onclick="byCity()">Найти по городу</button>
+ <p class="mu" style="font-size:13px;margin:10px 0 0">Через кнопку «Кибла» внизу главной страницы можно открыть компас.</p><a class="go" style="display:inline-block;margin-top:10px;text-decoration:none" href="#/qibla">Открыть компас киблы</a></div>
+ <div class="box" style="margin-top:14px"><b>Метод расчёта</b><select class="fi" id="mth" onchange="setPS()">${METHODS.map(([v,t])=>`<option value="${v}">${t}</option>`).join('')}</select>
+ <label class="chk"><input type="checkbox" id="hn" ${ps.school?'checked':''} onchange="setPS()"> Аср по ханафитскому мазхабу</label></div></div>`;
+ $('mth').value=ps.method;paintPrayer()}
+function setPS(){store.set('ps',{method:+$('mth').value,school:$('hn').checked?1:0});paintPrayer()}
+async function byCity(){const c=$('city').value.trim(),k=$('ctry').value.trim();if(!c||!k){alert('Введите город и страну.');return}
+ try{const j=await api(`https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(c)}&country=${encodeURIComponent(k)}&method=${PS().method}`);const m=j.data.meta;
+  store.set('loc',{lat:m.latitude,lng:m.longitude,tz:m.timezone,label:`${c}, ${k}`});viewPrayer()}catch(e){alert('Город не найден. Попробуйте написать название латиницей.')}}
+
+/* ---------- КИБЛА ---------- */
+function qiblaBearing(lat,lng){const r=Math.PI/180,k1=21.4225*r,k2=39.8262*r,p=lat*r,l=lng*r,y=Math.sin(k2-l)*Math.cos(k1),x=Math.cos(p)*Math.sin(k1)-Math.sin(p)*Math.cos(k1)*Math.cos(k2-l);return(Math.atan2(y,x)/r+360)%360}
+function distKm(lat,lng){const r=Math.PI/180,a=(21.4225-lat)*r,b=(39.8262-lng)*r,h=Math.sin(a/2)**2+Math.cos(lat*r)*Math.cos(21.4225*r)*Math.sin(b/2)**2;return 12742*Math.asin(Math.sqrt(h))}
+let HD=null,BR=0;
+function oc(e){let h=null;if(e.webkitCompassHeading!=null)h=e.webkitCompassHeading;else if((e.type=='deviceorientationabsolute'||e.absolute)&&e.alpha!=null)h=360-e.alpha;if(h==null||!$('dial'))return;
+ if(HD==null)HD=h;else{const d=((h-HD+540)%360)-180;HD=(HD+d*.25+360)%360}
+ $('dial').setAttribute('transform',`rotate(${-HD})`);const diff=Math.abs(((HD-BR+540)%360)-180),ok=diff<4,c=$('cmp');
+ if(ok&&!c.classList.contains('ok')&&navigator.vibrate)navigator.vibrate(40);c.classList.toggle('ok',ok);$('qh').textContent='курс телефона '+Math.round(HD)+'°'}
+function stopCompass(){removeEventListener('deviceorientationabsolute',oc,true);removeEventListener('deviceorientation',oc,true);HD=null}
+function startCompass(){const go=()=>{addEventListener('deviceorientationabsolute',oc,true);addEventListener('deviceorientation',oc,true);$('qstart').hidden=true};
+ if(typeof DeviceOrientationEvent!=='undefined'&&DeviceOrientationEvent.requestPermission)DeviceOrientationEvent.requestPermission().then(r=>r=='granted'?go():alert('Доступ к датчикам не разрешён.')).catch(()=>alert('Не удалось включить компас.'));else go()}
+function viewQibla(){bar('Кибла','#/');const loc=LOC();
+ if(!loc){V.innerHTML=`<div class="wrap" style="text-align:center;padding-top:40px"><p class="mu">Чтобы показать направление на Каабу, нужно знать ваше местоположение.</p><button class="go" onclick="locate().then(ok=>ok&&viewQibla())">Определить местоположение</button></div>`;return}
+ BR=qiblaBearing(+loc.lat,+loc.lng);const km=Math.round(distKm(+loc.lat,+loc.lng));
+ let tk='',lt='';for(let i=0;i<36;i++){const m=i%9==0;tk+=`<line class="tk ${m?'m':''}" x1="0" y1="-135" x2="0" y2="${m?-117:-127}" transform="rotate(${i*10})"/>`}
+ [['С',0,'n'],['В',90,''],['Ю',180,''],['З',270,'']].forEach(([t,a,c])=>{const r=Math.PI/180;lt+=`<text class="cl ${c}" x="${(100*Math.sin(a*r)).toFixed(1)}" y="${(-100*Math.cos(a*r)).toFixed(1)}">${t}</text>`});
+ V.innerHTML=`<div class="wrap"><div class="cmpw"><svg class="cmp" id="cmp" viewBox="-150 -150 300 300"><circle class="cr" r="135"/><g id="dial">${tk}${lt}<g transform="rotate(${BR})"><line class="ql" x1="0" y1="-24" x2="0" y2="-66"/><g transform="translate(0,-80)"><rect x="-12" y="-12" width="24" height="24" rx="3" fill="#161616"/><rect x="-12" y="-5" width="24" height="4" fill="#d8b45e"/></g></g></g><circle r="5" class="ptr"/><path class="ptr" d="M0,-149 L-11,-129 L11,-129Z"/></svg></div>
+ <div class="qi"><b>${Math.round(BR)}°</b><span class="mu">направление на Каабу от севера по часовой стрелке</span><div class="mu" style="margin-top:4px">до Каабы ≈ ${km.toLocaleString('ru')} км · <span id="qh">компас выключен</span></div></div>
+ <div style="text-align:center;margin-top:14px"><button class="go" id="qstart" onclick="startCompass()">Включить компас</button></div>
+ <p class="mu" style="text-align:center;font-size:13px;margin:16px 12px">Держите телефон горизонтально. Когда стрелка вверху совпадёт со значком Каабы, вы смотрите в сторону киблы. Отойдите от металла и магнитов; при необходимости откалибруйте компас, описав телефоном «восьмёрку». Если датчика нет, ориентируйтесь по градусам.</p></div>`}
+
+/* ---------- КОРАН ---------- */
+const REC=[['Alafasy_128kbps','Мишари аль-Афаси'],['Husary_128kbps','Махмуд Халиль аль-Хусари'],['Abdul_Basit_Murattal_192kbps','Абдульбасит Абдуссамад'],['Abdurrahmaan_As-Sudais_192kbps','Абдуррахман ас-Судайс']];
+let SU=null,SN=0,COUNT=0,cur=null;const AU=new Audio(),pad=n=>String(n).padStart(3,'0');
+async function viewQuran(){bar('Коран','#/');V.innerHTML=`<div class="wrap"><input class="fi" id="sf" placeholder="Найти суру по названию или номеру" oninput="drawSurahs()"><div id="sl"></div></div>`;
+ $('sl').innerHTML=SK;try{if(!SU)SU=await api('/api/surahs');drawSurahs()}catch(e){$('sl').innerHTML=ERR}}
+function drawSurahs(){const f=($('sf').value||'').trim().toLowerCase();
+ $('sl').innerHTML=SU.filter(s=>!f||String(s.n)==f||(s.ru||'').toLowerCase().includes(f)||(s.en||'').toLowerCase().includes(f)).map(s=>`<a class="row" href="#/quran/${s.n}"><div class="nb">${s.n}</div><div class="mid"><b>${esc(s.ru)}</b><span>${esc(s.en)} · ${s.count} аятов · ${s.type=='Meccan'?'Мекканская':'Мединская'}</span></div><span class="ra">${esc(s.ar||'')}</span></a>`).join('')||'<p class="info">Ничего не найдено</p>'}
+async function viewSurah(n){bar('Сура '+n,'#/quran');V.innerHTML=SK;
+ try{const j=await api(`/api/surah?n=${n}&lang=${TL()}`);const i=j.info||{ru:'Сура '+n,ar:'',en:'',count:j.ayahs.length};SN=n;COUNT=j.ayahs.length;bar(i.ru,'#/quran');const rec=store.get('rec',REC[0][0]);
+  V.innerHTML=`<div class="wrap"><div class="sh"><div class="ar">${esc(i.ar||'')}</div><div class="ru">${esc(i.ru)}</div><div class="mu">${esc(i.en||'')} · ${COUNT} аятов</div></div>
+  <div class="ctl"><button class="go pa" id="pall" onclick="playAll()">${ic('play')} Слушать суру</button>
+  <select onchange="store.set('rec',this.value)">${REC.map(r=>`<option value="${r[0]}" ${r[0]==rec?'selected':''}>${r[1]}</option>`).join('')}</select>
+  <select onchange="store.set('tl',this.value);viewSurah(${n})"><option value="ru" ${TL()=='ru'?'selected':''}>Перевод: русский</option><option value="en" ${TL()=='en'?'selected':''}>Translation: English</option></select></div>
+  ${n!=1&&n!=9?'<div class="bs">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':''}
+  ${j.ayahs.map(a=>`<div class="ay" data-a="${a.a}"><div class="hd"><div class="no">${a.a}</div><button class="pl" onclick="playAyah(${a.a})" aria-label="Слушать">${ic('play')}</button></div><div class="ar">${esc(a.ar||'')}</div>${a.tr?`<div class="tr">${esc(a.tr)}</div>`:''}</div>`).join('')}
+  <div class="pg">${n>1?`<button onclick="location.hash='#/quran/${n-1}'">‹ Предыдущая сура</button>`:''}${n<114?`<button onclick="location.hash='#/quran/${n+1}'">Следующая сура ›</button>`:''}</div></div>`}
+ catch(e){V.innerHTML=ERR}}
+function playTo(n,a,all){AU.pause();cur={n,a,all};AU.src=`https://everyayah.com/data/${store.get('rec',REC[0][0])}/${pad(n)}${pad(a)}.mp3`;AU.play().catch(()=>{cur=null;mark();alert('Не удалось воспроизвести аудио. Проверьте интернет.')});mark()}
+function playAyah(a){if(cur&&!cur.all&&cur.a==a){stopAudio();return}playTo(SN,a,false)}
+function playAll(){if(cur&&cur.all){stopAudio();return}playTo(SN,1,true)}
+AU.onended=()=>{if(cur&&cur.all&&cur.a<COUNT)playTo(cur.n,cur.a+1,true);else{cur=null;mark()}};
+function stopAudio(){AU.pause();cur=null;mark()}
+function mark(){document.querySelectorAll('.ay').forEach(e=>{const on=!!cur&&+e.dataset.a==cur.a;e.classList.toggle('playing',on);const b=e.querySelector('.pl');if(b)b.innerHTML=on?ic('pause'):ic('play')});
+ const p=$('pall');if(p)p.innerHTML=cur&&cur.all?ic('pause')+' Остановить':ic('play')+' Слушать суру';
+ if(cur){const el=document.querySelector('.ay.playing');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})}}
+
+/* ---------- ХАДИСЫ ---------- */
+function viewHadith(){bar('Книги хадисов','#/');V.innerHTML=`<div class="wrap" style="padding-top:6px">${BOOKS.map(([s,n,a])=>`<a class="row" href="#/books/${s}"><div class="nb">${ic('book')}</div><div class="mid"><b>${n}</b><span>арабский текст и перевод</span></div><span class="ra">${a}</span></a>`).join('')}</div>`}
+async function viewBook(slug){const b=BOOKS.find(x=>x[0]==slug);if(!b){location.hash='#/hadith';return}bar(b[1],'#/hadith');
+ V.innerHTML=`<div class="wrap"><div class="jump"><input class="fi" id="jn" type="number" inputmode="numeric" placeholder="Перейти к хадису №" onkeydown="if(event.key=='Enter')jump('${slug}')"><button class="go" onclick="jump('${slug}')">Найти</button></div>
+ <a class="row" href="#/books/${slug}/all"><div class="nb">${ic('book')}</div><div class="mid"><b>Все хадисы подряд</b><span>листать по страницам</span></div></a><div id="chs">${SK}</div></div>`;
+ try{const c=await api(`/api/chapters?src=${slug}&lang=${TL()}`);$('chs').innerHTML=c.length?'<h3 class="hs">Разделы</h3>'+c.map(x=>`<a class="row" href="#/books/${slug}/${x.sec}"><div class="nb">${x.sec}</div><div class="mid"><b>${esc(x.name)}</b><span>${x.count} хадисов</span></div></a>`).join(''):''}catch(e){$('chs').innerHTML=''}}
+function jump(s){const v=$('jn').value.trim();if(v)location.hash=`#/books/${s}/n${v}`}
+const hcard=(x,i,src)=>`<div class="c h" style="--i:${Math.min(i,8)}"><div class="top"><span class="tag">${esc(src)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
+ <div class="txt ar">${esc(x.ar)}</div>${x.tr?`<div class="txt tr2">${fx(x.tr)}${x.trlang&&x.trlang!=TL()?' <span class="ref">(перевод на английском)</span>':''}</div>`:'<div class="txt tr2 mu">Перевод отсутствует в источнике</div>'}
+ <button class="cp" onclick="cp(${i},this)">Копировать</button>${lk({...x,kind:'hadith'})}</div>`;
+async function viewList(slug,spec,page=0){const b=BOOKS.find(x=>x[0]==slug);if(!b){location.hash='#/hadith';return}bar(b[1],`#/books/${slug}`);V.innerHTML=SK;
+ const q=spec=='all'?'':/^n\d+$/.test(spec)?`&num=${spec.slice(1)}`:`&sec=${spec}`;
+ try{const j=await api(`/api/hadiths?src=${slug}&lang=${TL()}&page=${page}${q}`);ITEMS=j.items.map(x=>({...x,src:b[1]}));const pages=Math.ceil(j.total/j.page_size);
+  V.innerHTML=`<div class="wrap"><p class="info">${j.total?`Хадисов: ${j.total}${pages>1?` · страница ${page+1} из ${pages}`:''}`:''}</p>${ITEMS.map((x,i)=>hcard(x,i,b[1])).join('')||'<p class="info">Ничего не найдено</p>'}${pager(page,j.total,j.page_size,`viewList('${slug}','${spec}',%n)`)}</div>`;if(page)window.scrollTo(0,0)}
+ catch(e){V.innerHTML=ERR}}
+
+/* ---------- ПОИСК ---------- */
+let SL='ru',SQ='',curQ='',total=0,page=0,size=20;const SS=new Set();
+const BK=[['','Все'],['quran','Коран'],['bukhari','Бухари'],['muslim','Муслим'],['abudawud','Абу Дауд'],['tirmidhi','Тирмизи'],['nasai','Насаи'],['ibnmajah','Ибн Маджа']];
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null;
-function listen(){
- if(!SR){alert('Голосовой ввод не поддерживается этим браузером. Откройте сайт в Chrome, Edge или Safari.');return}
- if(rec){rec.stop();return}
- rec=new SR();rec.lang={ru:'ru-RU',en:'en-US',ar:'ar-SA'}[L];rec.interimResults=true;
- rec.onstart=()=>{$('mic').classList.add('on');q.placeholder='Говорите…'};
- rec.onresult=e=>{q.value=Array.from(e.results).map(r=>r[0].transcript).join('')};
+function viewSearch(){bar('Поиск по темам','#/');
+ V.innerHTML=`<div class="wrap"><div class="box" style="margin-top:16px"><div class="bar">${ic('search')}<input id="q" placeholder="Тема, например: терпение, родители, милостыня" autocomplete="off"><button class="ic" id="mic" type="button" aria-label="Голосовой ввод">${ic('mic')}</button><button class="go" id="gob">Найти</button></div>
+ <div class="chips"><div class="seg" id="lg">${[['ru','Русский'],['en','English'],['ar','العربية']].map(([v,t])=>`<button data-v="${v}" class="${v==SL?'act':''}">${t}</button>`).join('')}</div></div>
+ <div class="books" id="bk"><span class="bl">Книги:</span>${BK.map(([v,t])=>`<button data-v="${v}" class="${v?(SS.has(v)?'act':''):(SS.size?'':'act')}">${t}</button>`).join('')}</div></div><div id="out"></div></div>`;
+ const qi=$('q');qi.value=SQ;qi.onkeydown=e=>{if(e.key=='Enter')go()};$('gob').onclick=go;$('mic').onclick=listen;
+ $('lg').onclick=e=>{const b=e.target.closest('button');if(!b)return;SL=b.dataset.v;[...$('lg').children].forEach(x=>x.classList.toggle('act',x===b));if(qi.value.trim())go()};
+ $('bk').onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v;if(!v)SS.clear();else SS.has(v)?SS.delete(v):SS.add(v);
+  $('bk').querySelectorAll('button').forEach(x=>x.classList.toggle('act',x.dataset.v?SS.has(x.dataset.v):SS.size==0));if(qi.value.trim())go()};
+ if(SQ)go()}
+function listen(){const mic=$('mic'),qi=$('q');if(!SR){alert('Голосовой ввод не поддерживается этим браузером. Откройте сайт в Chrome, Edge или Safari.');return}
+ if(rec){rec.stop();return}rec=new SR();rec.lang={ru:'ru-RU',en:'en-US',ar:'ar-SA'}[SL];rec.interimResults=true;
+ rec.onstart=()=>{mic.classList.add('on');qi.placeholder='Говорите…'};rec.onresult=e=>{qi.value=Array.from(e.results).map(r=>r[0].transcript).join('')};
  rec.onerror=e=>{if(e.error=='not-allowed')alert('Разрешите доступ к микрофону в настройках браузера (значок слева от адреса сайта).')};
- rec.onend=()=>{$('mic').classList.remove('on');q.placeholder='Тема, например: терпение, родители, милостыня';rec=null;if(q.value.trim())go()};
- rec.start();
-}
-function gcls(g){g=(g||'').toLowerCase();return g.includes('sahih')||g.includes('صحيح')?'s':(g.includes('daif')||g.includes('da\'if')||g.includes('ضعيف')?'d':'')}
-const items=[];let curQ='',total=0,page=0,size=20;
-const card=(x,i)=>`<div class="c ${x.kind=='hadith'?'h':''}" style="--i:${i}">
- <div class="top"><span class="tag">${esc(x.source)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
- ${x.ar?`<button class="ao" onclick="tg(this)">Арабский текст ▾</button><div class="abw"><div class="abi"><div class="txt ar ab">${esc(x.ar)}</div></div></div>`:''}<div class="txt ${L=='ar'?'ar':''}">${fx(x.text)}</div><button class="cp" onclick="cp(${i},this)">Копировать</button>${x.url?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">Проверить на ${x.kind=='quran'?'quran.com':'sunnah.com'} ↗</a>`:''}</div>`;
-const fetchPage=async n=>(await fetch(`/api/search?q=${encodeURIComponent(curQ)}&lang=${L}&src=${[...S].join(',')}&offset=${n*size}`)).json();
-function pager(){
- const pages=Math.ceil(total/size);if(pages<2)return '';
- const nums=new Set([0,pages-1]);for(let i=page-2;i<=page+2;i++)if(i>=0&&i<pages)nums.add(i);
- const list=[...nums].sort((a,b)=>a-b);let h=`<button ${page==0?'disabled':''} onclick="goPage(${page-1})" aria-label="Назад">‹</button>`,prev=-1;
- for(const n of list){if(n-prev>1)h+='<span>…</span>';h+=`<button class="${n==page?'cur':''}" onclick="goPage(${n})">${n+1}</button>`;prev=n}
- return `<div class="pg">${h}<button ${page==pages-1?'disabled':''} onclick="goPage(${page+1})" aria-label="Вперёд">›</button></div>`;
-}
-function render(){
- const out=$('out');
- if(!items.length){out.innerHTML='<p class="info">Ничего не найдено. Попробуйте другое слово, язык или книги.</p>';return}
- const pages=Math.ceil(total/size);
- out.innerHTML=`<p class="info">Найдено: ${total} · страница ${page+1} из ${pages}</p>`+items.map(card).join('')+pager();
-}
-async function goPage(n,scroll=true){
- const out=$('out');out.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
- try{const r=await fetchPage(n);size=r.page_size||size;items.length=0;items.push(...r.results);total=r.total;page=n;render();
-  if(scroll)out.scrollIntoView({behavior:'smooth',block:'start'})}
- catch(e){out.innerHTML='<p class="info">Не удалось выполнить поиск. Сервер, возможно, просыпается — подождите минуту и повторите.</p>'}
-}
-function go(){const v=q.value.trim();if(!v)return;curQ=v;goPage(0,false)}
-function cp(i,b){const x=items[i];navigator.clipboard.writeText(`${x.ar?x.ar+'\n':''}${x.text}\n— ${x.source}, ${x.ref}`).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)})}
+ rec.onend=()=>{mic.classList.remove('on');qi.placeholder='Тема, например: терпение, родители, милостыня';rec=null;if(qi.value.trim())go()};rec.start()}
+const scard=(x,i)=>`<div class="c ${x.kind=='hadith'?'h':''}" style="--i:${Math.min(i,8)}"><div class="top"><span class="tag">${esc(x.source)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
+ ${x.ar?`<button class="ao" onclick="tg(this)">Арабский текст ▾</button><div class="abw"><div class="abi"><div class="txt ar ab">${esc(x.ar)}</div></div></div>`:''}<div class="txt ${SL=='ar'?'ar':''}">${fx(x.text)}</div>
+ <button class="cp" onclick="cp(${i},this)">Копировать</button>${lk(x)}</div>`;
+function tg(b){const w=b.nextElementSibling,o=w.classList.toggle('open');b.textContent=o?'Арабский текст ▴':'Арабский текст ▾'}
+const fetchPage=async n=>api(`/api/search?q=${encodeURIComponent(curQ)}&lang=${SL}&src=${[...SS].join(',')}&offset=${n*size}`);
+async function goPage(n,scroll){const out=$('out');if(!out)return;out.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
+ try{const r=await fetchPage(n);size=r.page_size||size;ITEMS=r.results;total=r.total;page=n;
+  out.innerHTML=ITEMS.length?`<p class="info">Найдено: ${total} · страница ${page+1} из ${Math.ceil(total/size)}</p>`+ITEMS.map(scard).join('')+pager(page,total,size,'goPage(%n,true)'):'<p class="info">Ничего не найдено. Попробуйте другое слово, язык или книги.</p>';
+  if(scroll)out.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){out.innerHTML='<p class="info">Не удалось выполнить поиск. Сервер, возможно, просыпается — подождите минуту и повторите.</p>'}}
+function go(){const v=$('q').value.trim();if(!v)return;SQ=curQ=v;goPage(0,false)}
 
-(function(){const t0=Date.now();
- const warm=fetch('/api/search?q='+encodeURIComponent('вера')+'&lang=ru').catch(()=>{});
- const cap=new Promise(r=>setTimeout(r,12000));
- Promise.race([warm,cap]).then(()=>{
-  const wait=Math.max(0,2000-(Date.now()-t0));
-  setTimeout(()=>{const s=document.getElementById('splash');s.classList.add('out');document.body.classList.remove('pre');setTimeout(()=>s.remove(),800)},wait);
- });
-})();
+/* ---------- запуск, заставка, PWA ---------- */
+route();
+(function(){const t0=Date.now();const warm=fetch('/api/search?q='+encodeURIComponent('вера')+'&lang=ru').catch(()=>{});const cap=new Promise(r=>setTimeout(r,12000));
+ Promise.race([warm,cap]).then(()=>{setTimeout(()=>{const s=$('splash');s.classList.add('out');document.body.classList.remove('pre');setTimeout(()=>s.remove(),800)},Math.max(0,2000-(Date.now()-t0)))})})();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script></body></html>
