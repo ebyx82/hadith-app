@@ -31,6 +31,9 @@ main{max-width:780px;margin:-48px auto 0;padding:0 16px 48px;position:relative}
 .seg{display:flex;background:var(--bg);border:1px solid var(--bd);border-radius:999px;padding:3px}
 .seg button{border:0;background:transparent;color:var(--mu);font:500 14px Inter,sans-serif;padding:6px 14px;border-radius:999px;cursor:pointer}
 .seg button.act{background:var(--ac);color:#fff}
+.books{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}.bl{color:var(--mu);font-size:14px}
+.books button{border:1px solid var(--bd);background:var(--bg);color:var(--mu);font:500 14px Inter,sans-serif;padding:5px 13px;border-radius:999px;cursor:pointer}
+.books button:hover{border-color:var(--ac)}.books button.act{background:var(--ac);border-color:var(--ac);color:#fff}
 .ex{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center;color:var(--mu);font-size:14px}
 .ex button{border:1px solid var(--bd);background:var(--card);color:var(--fg);padding:4px 12px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer}
 .ex button:hover{border-color:var(--ac);color:var(--ac)}
@@ -66,9 +69,10 @@ footer{text-align:center;color:var(--mu);font-size:13px;margin-top:36px}
  </div>
  <div class="chips">
   <div class="seg" id="lg"><button data-v="ru" class="act">Русский</button><button data-v="en">English</button><button data-v="ar">العربية</button></div>
-  <div class="seg" id="kd"><button data-v="" class="act">Всё</button><button data-v="quran">Коран</button><button data-v="hadith">Хадисы</button></div>
+  </div>
+ <div class="books" id="bk"><span class="bl">Книги:</span>
+  <button data-v="" class="act">Все</button><button data-v="quran">Коран</button><button data-v="bukhari">Бухари</button><button data-v="muslim">Муслим</button><button data-v="abudawud">Абу Дауд</button><button data-v="tirmidhi">Тирмизи</button><button data-v="nasai">Насаи</button><button data-v="ibnmajah">Ибн Маджа</button>
  </div>
- <div class="ex" id="ex"></div>
 </div>
 <div id="out"></div>
 <footer>Тексты: hadith-api и alquran.cloud · Для фикха обращайтесь к учёным</footer>
@@ -76,14 +80,14 @@ footer{text-align:center;color:var(--mu);font-size:13px;margin-top:36px}
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-let L='ru',K='';
-const EX={ru:['терпение','родители','милостыня','честность','прощение','знание'],
- en:['patience','parents','charity','honesty','forgiveness','knowledge'],
- ar:['الصبر','الوالدين','الصدقة','الصدق','العفو','العلم']};
-function ex(){$('ex').innerHTML='<span>Например:</span>'+EX[L].map(w=>`<button onclick="q.value='${w}';go()">${w}</button>`).join('')}
+let L='ru';const S=new Set();
 function seg(id,set){$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;
- [...$(id).children].forEach(x=>x.classList.toggle('act',x===b));set(b.dataset.v);ex();if(q.value.trim())go()}}
-seg('lg',v=>L=v);seg('kd',v=>K=v);ex();
+ [...$(id).children].forEach(x=>x.classList.toggle('act',x===b));set(b.dataset.v);if(q.value.trim())go()}}
+seg('lg',v=>L=v);
+$('bk').onclick=e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v;
+ if(!v)S.clear();else S.has(v)?S.delete(v):S.add(v);
+ [...$('bk').querySelectorAll('button')].forEach(x=>x.classList.toggle('act',x.dataset.v?S.has(x.dataset.v):S.size==0));
+ if(q.value.trim())go()};
 
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null;
 function listen(){
@@ -101,7 +105,7 @@ const items=[];
 async function go(){
  const v=q.value.trim(),out=$('out');if(!v)return;
  out.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
- let r;try{r=await (await fetch(`/api/search?q=${encodeURIComponent(v)}&lang=${L}&kind=${K}`)).json()}
+ let r;try{r=await (await fetch(`/api/search?q=${encodeURIComponent(v)}&lang=${L}&src=${[...S].join(',')}`)).json()}
  catch(e){out.innerHTML='<p class="info">Не удалось выполнить поиск. Сервер, возможно, просыпается — подождите минуту и повторите.</p>';return}
  items.length=0;r.forEach(x=>items.push(x));
  out.innerHTML=r.length?`<p class="info">Найдено: ${r.length}</p>`+r.map((x,i)=>`<div class="c ${x.kind=='hadith'?'h':''}">

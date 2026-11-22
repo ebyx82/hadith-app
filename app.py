@@ -23,12 +23,17 @@ def make_url(kind, source, ref):
     m = re.fullmatch(r"№(\d+)", ref)
     return f"https://sunnah.com/{slug}:{m.group(1)}" if m else f"https://sunnah.com/{slug}"
 
-def search(q, lang, kind, limit=40):
+NAME = {v: k for k, v in SLUG.items()}
+NAME["quran"] = "Коран"
+
+def search(q, lang, srcs, limit=40):
     m = fts_query(q)
     if not m: return []
+    names = [NAME[x] for x in srcs if x in NAME]
     sql = ("SELECT d.kind,d.source,d.ref,d.grade,d.text FROM fts JOIN docs d ON d.id=fts.rowid "
-           "WHERE fts MATCH ? AND d.lang=?" + (" AND d.kind=?" if kind else "") + " ORDER BY bm25(fts) LIMIT ?")
-    args = [m, lang] + ([kind] if kind else []) + [limit]
+           "WHERE fts MATCH ? AND d.lang=?" + (f" AND d.source IN ({','.join('?'*len(names))})" if names else "")
+           + " ORDER BY bm25(fts) LIMIT ?")
+    args = [m, lang] + names + [limit]
     db = sqlite3.connect("hadith.db")
     rows = db.execute(sql, args).fetchall(); db.close()
     return [dict(kind=a, source=b, ref=c, grade=d, text=e, url=make_url(a, b, c)) for a, b, c, d, e in rows]
@@ -38,7 +43,8 @@ class H(BaseHTTPRequestHandler):
         u = urlparse(self.path)
         if u.path == "/api/search":
             p = parse_qs(u.query)
-            res = search(p.get("q", [""])[0], p.get("lang", ["ru"])[0], p.get("kind", [""])[0])
+            srcs = [x for x in p.get("src", [""])[0].split(",") if x]
+            res = search(p.get("q", [""])[0], p.get("lang", ["ru"])[0], srcs)
             body, ct = json.dumps(res, ensure_ascii=False).encode(), "application/json; charset=utf-8"
         else:
             body, ct = open("index.html" if os.path.exists("index.html") else "static/index.html", "rb").read(), "text/html; charset=utf-8"
