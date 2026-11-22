@@ -42,15 +42,21 @@ MANIFEST = json.dumps({
         {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
     ],
 }, ensure_ascii=False).encode()
-SW = b"""const C='quran-sunna-v2';
-self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['/','/icon-192.png'])));self.skipWaiting()});
+SW = b"""const C='quran-sunna-v3',MARK='quran-sunna-shell';
+const isHtml=x=>/text\\/html/.test(x.headers.get('content-type')||'');
+self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(async c=>{
+ try{const r=await fetch('/');const t=await r.clone().text();if(r.ok&&t.includes(MARK))await c.put('/',r)}catch(err){}
+ try{await c.add('/icon-192.png')}catch(err){}}))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));self.clients.claim()});
-self.addEventListener('fetch',e=>{const u=new URL(e.request.url);
- if(e.request.method!=='GET'||u.origin!==location.origin||u.pathname.startsWith('/api/'))return;
- const net=fetch(e.request).then(r=>{const cp=r.clone();caches.open(C).then(c=>c.put(e.request,cp));return r});
- const wait=new Promise(r=>setTimeout(()=>r(null),2500));
- e.respondWith(Promise.race([net,wait]).then(r=>r||caches.match(e.request).then(m=>m||net))
-  .catch(()=>caches.match(e.request).then(m=>m||caches.match('/'))))});
+async function shell(r){
+ try{const x=await Promise.race([fetch(r),new Promise((_,j)=>setTimeout(j,3000))]);const t=await x.clone().text();
+  if(x.ok&&t.includes(MARK)){const c=await caches.open(C);c.put('/',x.clone());return x}}catch(err){}
+ const m=await caches.match('/');return m||fetch(r)}
+self.addEventListener('fetch',e=>{const r=e.request,u=new URL(r.url);
+ if(r.method!=='GET'||u.origin!==location.origin||u.pathname.startsWith('/api/'))return;
+ if(r.mode==='navigate'){e.respondWith(shell(r));return}
+ e.respondWith(fetch(r).then(async x=>{if(isHtml(x)){const m=await caches.match(r);return m||x}
+  if(x.ok){const cp=x.clone();caches.open(C).then(c=>c.put(r,cp))}return x}).catch(()=>caches.match(r)))});
 """
 ASSETS = {
     "/manifest.webmanifest": (MANIFEST, "application/manifest+json"),
@@ -102,13 +108,28 @@ def api_surah(p):
         a["ar" if r["lang"] == "ar" else "tr"] = r["text"]
     return {"info": info[0] if info else None, "ayahs": [ayahs[k] for k in sorted(ayahs)]}
 
-def api_chapters(p):
-    src = NAME.get(p.get("src")); lang = p.get("lang", "ru"); names = {}
+def sec_names(src, lang):
+    names, ar = {}, {}
     for l in dict.fromkeys([lang, "en", "ar"]):
         for r in q("SELECT sec,name FROM sections WHERE source=? AND lang=?", (src, l)):
             names.setdefault(r["sec"], r["name"])
-    rows = q("SELECT sec, COUNT(*) c FROM docs WHERE source=? AND lang='ar' AND sec IS NOT NULL GROUP BY sec ORDER BY sec", (src,))
-    return [{"sec": r["sec"], "name": names.get(r["sec"], f"Раздел {r['sec']}"), "count": r["c"]} for r in rows]
+    for r in q("SELECT sec,name FROM sections WHERE source=? AND lang='ar'", (src,)):
+        ar[r["sec"]] = r["name"]
+    return names, ar
+
+def api_chapters(p):
+    src = NAME.get(p.get("src")); lang = p.get("lang", "ru")
+    names, ar = sec_names(src, lang)
+    out = []
+    for r in q("SELECT sec, COUNT(*) c FROM docs WHERE source=? AND lang='ar' AND sec IS NOT NULL GROUP BY sec ORDER BY sec", (src,)):
+        sec = r["sec"]; it = {"sec": sec, "name": names.get(sec), "count": r["c"]}
+        if ar.get(sec) and ar.get(sec) != it["name"]: it["ar"] = ar[sec]
+        if not it["name"]:   # запасной вариант: начало первого хадиса главы
+            for l in dict.fromkeys([lang, "en", "ar"]):
+                t = q("SELECT text FROM docs WHERE kind='hadith' AND source=? AND lang=? AND sec=? ORDER BY num LIMIT 1", (src, l, sec))
+                if t: it["preview"] = t[0]["text"][:80].strip() + "…"; break
+        out.append(it)
+    return out
 
 def api_hadiths(p):
     src = NAME.get(p.get("src")); lang = p.get("lang", "ru"); page = max(0, int(p.get("page", 0))); size = 20
@@ -127,9 +148,12 @@ def api_hadiths(p):
                 it["grade"] = it["grade"] or t[0]["grade"]
                 break
         items.append(it)
-    return {"total": total, "page_size": size, "items": items}
+    chapter = None
+    if p.get("sec", "").isdigit():
+        chapter = sec_names(src, lang)[0].get(int(p["sec"])) or f"Глава {p['sec']}"
+    return {"total": total, "page_size": size, "items": items, "chapter": chapter}
 
-API = {"/api/surahs": api_surahs, "/api/surah": api_surah, "/api/chapters": api_chapters, "/api/hadiths": api_hadiths}
+API = {"/api/ping": lambda p: {"ok": True}, "/api/surahs": api_surahs, "/api/surah": api_surah, "/api/chapters": api_chapters, "/api/hadiths": api_hadiths}
 
 class H(BaseHTTPRequestHandler):
     def do_GET(self):

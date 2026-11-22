@@ -1,5 +1,6 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Поиск по Корану и Сунне</title>
+<meta name="app-shell" content="quran-sunna-shell">
 <link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0f3d2e">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" type="image/png" href="/icon-192.png">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
@@ -182,7 +183,7 @@ footer{text-align:center;color:var(--mu);font-size:13px;margin-top:36px}
   <circle cx="50" cy="50" r="13.5" fill="#0f3d2e"/><circle cx="50" cy="50" r="8.5" fill="#d8b45e"/><circle cx="53" cy="49.5" r="7" fill="#0f3d2e"/></svg>
  <div class="sp-bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
  <div class="sp-t">Коран и Сунна</div>
- <div class="sp-bar"><i></i></div><div class="sp-l">Загрузка…</div>
+ <div class="sp-bar"><i></i></div><div class="sp-l" id="spl">Загрузка…</div>
 </div>
 
 <header id="bar" hidden></header>
@@ -343,10 +344,15 @@ function mark(){document.querySelectorAll('.ay').forEach(e=>{const on=!!cur&&+e.
 
 /* ---------- ХАДИСЫ ---------- */
 function viewHadith(){bar('Книги хадисов','#/');V.innerHTML=`<div class="wrap" style="padding-top:6px">${BOOKS.map(([s,n,a])=>`<a class="row" href="#/books/${s}"><div class="nb">${ic('book')}</div><div class="mid"><b>${n}</b><span>арабский текст и перевод</span></div><span class="ra">${a}</span></a>`).join('')}</div>`}
+let CH=[];
 async function viewBook(slug){const b=BOOKS.find(x=>x[0]==slug);if(!b){location.hash='#/hadith';return}bar(b[1],'#/hadith');
  V.innerHTML=`<div class="wrap"><div class="jump"><input class="fi" id="jn" type="number" inputmode="numeric" placeholder="Перейти к хадису №" onkeydown="if(event.key=='Enter')jump('${slug}')"><button class="go" onclick="jump('${slug}')">Найти</button></div>
+ <input class="fi" id="cf" placeholder="Найти главу или тему по названию" oninput="drawCh('${slug}')">
  <a class="row" href="#/books/${slug}/all"><div class="nb">${ic('book')}</div><div class="mid"><b>Все хадисы подряд</b><span>листать по страницам</span></div></a><div id="chs">${SK}</div></div>`;
- try{const c=await api(`/api/chapters?src=${slug}&lang=${TL()}`);$('chs').innerHTML=c.length?'<h3 class="hs">Разделы</h3>'+c.map(x=>`<a class="row" href="#/books/${slug}/${x.sec}"><div class="nb">${x.sec}</div><div class="mid"><b>${esc(x.name)}</b><span>${x.count} хадисов</span></div></a>`).join(''):''}catch(e){$('chs').innerHTML=''}}
+ try{CH=await api(`/api/chapters?src=${slug}&lang=${TL()}`);drawCh(slug)}catch(e){$('chs').innerHTML=ERR}}
+function drawCh(slug){const f=($('cf').value||'').trim().toLowerCase();
+ const list=CH.filter(x=>!f||String(x.sec)==f||(x.name||'').toLowerCase().includes(f)||(x.ar||'').includes(f));
+ $('chs').innerHTML=CH.length?'<h3 class="hs">Главы и темы</h3>'+(list.map(x=>`<a class="row" href="#/books/${slug}/${x.sec}"><div class="nb">${x.sec}</div><div class="mid"><b>${esc(x.name||'Глава '+x.sec)}</b><span>${x.count} хадисов${x.preview?' · «'+esc(x.preview)+'»':''}</span></div>${x.ar?`<span class="ra" style="font-size:20px">${esc(x.ar)}</span>`:''}</a>`).join('')||'<p class="info">Ничего не найдено</p>'):''}
 function jump(s){const v=$('jn').value.trim();if(v)location.hash=`#/books/${s}/n${v}`}
 const hcard=(x,i,src)=>`<div class="c h" style="--i:${Math.min(i,8)}"><div class="top"><span class="tag">${esc(src)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
  <div class="txt ar">${esc(x.ar)}</div>${x.tr?`<div class="txt tr2">${fx(x.tr)}${x.trlang&&x.trlang!=TL()?' <span class="ref">(перевод на английском)</span>':''}</div>`:'<div class="txt tr2 mu">Перевод отсутствует в источнике</div>'}
@@ -354,7 +360,7 @@ const hcard=(x,i,src)=>`<div class="c h" style="--i:${Math.min(i,8)}"><div class
 async function viewList(slug,spec,page=0){const b=BOOKS.find(x=>x[0]==slug);if(!b){location.hash='#/hadith';return}bar(b[1],`#/books/${slug}`);V.innerHTML=SK;
  const q=spec=='all'?'':/^n\d+$/.test(spec)?`&num=${spec.slice(1)}`:`&sec=${spec}`;
  try{const j=await api(`/api/hadiths?src=${slug}&lang=${TL()}&page=${page}${q}`);ITEMS=j.items.map(x=>({...x,src:b[1]}));const pages=Math.ceil(j.total/j.page_size);
-  V.innerHTML=`<div class="wrap"><p class="info">${j.total?`Хадисов: ${j.total}${pages>1?` · страница ${page+1} из ${pages}`:''}`:''}</p>${ITEMS.map((x,i)=>hcard(x,i,b[1])).join('')||'<p class="info">Ничего не найдено</p>'}${pager(page,j.total,j.page_size,`viewList('${slug}','${spec}',%n)`)}</div>`;if(page)window.scrollTo(0,0)}
+  V.innerHTML=`<div class="wrap">${j.chapter?`<h3 class="hs" style="margin-top:18px">${esc(j.chapter)}</h3>`:''}<p class="info">${j.total?`Хадисов: ${j.total}${pages>1?` · страница ${page+1} из ${pages}`:''}`:''}</p>${ITEMS.map((x,i)=>hcard(x,i,b[1])).join('')||'<p class="info">Ничего не найдено</p>'}${pager(page,j.total,j.page_size,`viewList('${slug}','${spec}',%n)`)}</div>`;if(page)window.scrollTo(0,0)}
  catch(e){V.innerHTML=ERR}}
 
 /* ---------- ПОИСК ---------- */
@@ -387,8 +393,11 @@ async function goPage(n,scroll){const out=$('out');if(!out)return;out.innerHTML=
 function go(){const v=$('q').value.trim();if(!v)return;SQ=curQ=v;goPage(0,false)}
 
 /* ---------- запуск, заставка, PWA ---------- */
-route();
-(function(){const t0=Date.now();const warm=fetch('/api/search?q='+encodeURIComponent('вера')+'&lang=ru').catch(()=>{});const cap=new Promise(r=>setTimeout(r,12000));
- Promise.race([warm,cap]).then(()=>{setTimeout(()=>{const s=$('splash');s.classList.add('out');document.body.classList.remove('pre');setTimeout(()=>s.remove(),800)},Math.max(0,2000-(Date.now()-t0)))})})();
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function serverUp(){try{const r=await fetch('/api/ping?'+Date.now(),{cache:'no-store'});if(!r.ok)return false;const j=await r.json();return !!(j&&j.ok)}catch(e){return false}}
+(async function boot(){const t0=Date.now();let n=0;
+ while(Date.now()-t0<100000){if(await serverUp())break;if(++n>=2)$('spl').textContent='Сервер просыпается — это может занять до минуты…';await sleep(2500)}
+ await sleep(Math.max(0,2000-(Date.now()-t0)));
+ route();const s=$('splash');s.classList.add('out');document.body.classList.remove('pre');setTimeout(()=>s.remove(),800)})();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script></body></html>

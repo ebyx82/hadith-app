@@ -46,6 +46,22 @@ def strip_bismillah(text):
         return " ".join(words[4:])
     return text
 
+def parse_sections(data):
+    """Названия глав и диапазоны номеров хадисов. Формат источника может отличаться, поэтому разбор терпимый."""
+    meta = data.get("metadata") or {}
+    names, ranges = {}, []
+    sec = meta.get("section")
+    if isinstance(sec, dict):
+        for k, v in sec.items():
+            if isinstance(v, str) and v.strip() and str(k).strip().isdigit():
+                names[int(k)] = v.strip()
+    det = meta.get("section_detail")
+    if isinstance(det, dict):
+        for k, d in det.items():
+            try: ranges.append((int(k), float(d["hadithnumber_first"]), float(d["hadithnumber_last"])))
+            except (KeyError, TypeError, ValueError): pass
+    return names, ranges
+
 for key, name in COLLECTIONS.items():
     for lang in LANGS:
         ed = f"{lang}-{key}"
@@ -53,19 +69,23 @@ for key, name in COLLECTIONS.items():
             data = get(HADITH_CDN.format(ed))
         except Exception as e:
             print(f"  пропуск {ed}: {e}"); continue
-        for k, v in ((data.get("metadata") or {}).get("section") or {}).items():
-            if v and str(k).isdigit():
-                db.execute("INSERT INTO sections VALUES(?,?,?,?)", (name, lang[:2], int(k), v))
-        n = 0
+        names, ranges = parse_sections(data)
+        for k, v in names.items():
+            db.execute("INSERT INTO sections VALUES(?,?,?,?)", (name, lang[:2], k, v))
+        n = withsec = 0
         for h in data.get("hadiths", []):
             grades = "; ".join(f'{g.get("grade")} ({g.get("name")})' for g in h.get("grades", []))
             ref = f'№{h.get("hadithnumber")}'
             try: num = float(h.get("hadithnumber"))
             except (TypeError, ValueError): num = None
             sec = (h.get("reference") or {}).get("book")
+            if not isinstance(sec, int) and num is not None:
+                for s_, a_, b_ in ranges:
+                    if a_ <= num <= b_: sec = s_; break
+            if isinstance(sec, int): withsec += 1
             add("hadith", name, ref, ref, num, sec if isinstance(sec, int) else None, lang[:2], grades, h.get("text"))
             n += 1
-        print(f"{ed}: {n}")
+        print(f"{ed}: {n} (глав с названиями: {len(names)}, хадисов с главой: {withsec})")
 
 for lang, ed in QURAN.items():
     try:
