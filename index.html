@@ -1,0 +1,32 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Поиск по Корану и Сунне</title>
+<style>
+:root{--bg:#fafaf7;--fg:#1d2b24;--card:#fff;--ac:#1f6f50;--mu:#6b7a72;--bd:#e2e6e0}
+@media(prefers-color-scheme:dark){:root{--bg:#121a16;--fg:#e8eee9;--card:#1b2620;--ac:#5fc59b;--mu:#93a39a;--bd:#2c3a33}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:24px 16px}
+h1{font-size:22px;color:var(--ac)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input,select,button{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--fg)}
+input{flex:1;min-width:200px}button{background:var(--ac);color:#fff;border:0;cursor:pointer}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-top:12px}
+.m{color:var(--mu);font-size:13px;margin-bottom:6px}.m b{color:var(--ac)}
+.ar{direction:rtl;font-size:20px}
+</style></head><body><main>
+<h1>Поиск по Корану и Сунне</h1>
+<div class="row"><input id="q" placeholder="Тема: например, терпение, родители, милостыня"
+ onkeydown="if(event.key=='Enter')go()">
+<select id="lang"><option value="ru">Русский</option><option value="en">English</option><option value="ar">العربية</option></select>
+<select id="kind"><option value="">Коран и хадисы</option><option value="quran">Только Коран</option><option value="hadith">Только хадисы</option></select>
+<button onclick="go()">Найти</button></div>
+<div id="out"></div></main>
+<script>
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+async function go(){
+  const q=document.getElementById('q').value,l=lang.value,k=kind.value,out=document.getElementById('out');
+  out.innerHTML='<p class="m">Ищу…</p>';
+  const r=await (await fetch(`/api/search?q=${encodeURIComponent(q)}&lang=${l}&kind=${k}`)).json();
+  out.innerHTML=r.length?r.map(x=>`<div class="c"><div class="m"><b>${esc(x.source)}</b> · ${esc(x.ref)}${x.grade?' · '+esc(x.grade):''}</div>
+  <div class="${l=='ar'?'ar':''}">${esc(x.text)}</div></div>`).join(''):'<p class="m">Ничего не найдено. Попробуй другое слово или язык.</p>';
+}
+</script></body></html>
