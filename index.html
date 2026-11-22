@@ -9,6 +9,8 @@ h1{font-size:22px;color:var(--ac)}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 input,select,button{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--fg)}
 input{flex:1;min-width:200px}button{background:var(--ac);color:#fff;border:0;cursor:pointer}
+#mic{background:var(--card);color:var(--fg);border:1px solid var(--bd);font-size:18px;line-height:1}
+#mic.on{background:#c0392b;color:#fff;border-color:#c0392b}
 .c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin-top:12px}
 .m{color:var(--mu);font-size:13px;margin-bottom:6px}.m b{color:var(--ac)}
 .ar{direction:rtl;font-size:20px}
@@ -18,10 +20,26 @@ input{flex:1;min-width:200px}button{background:var(--ac);color:#fff;border:0;cur
  onkeydown="if(event.key=='Enter')go()">
 <select id="lang"><option value="ru">Русский</option><option value="en">English</option><option value="ar">العربية</option></select>
 <select id="kind"><option value="">Коран и хадисы</option><option value="quran">Только Коран</option><option value="hadith">Только хадисы</option></select>
+<button id="mic" type="button" title="Голосовой ввод" onclick="listen()">🎤</button>
 <button onclick="go()">Найти</button></div>
 <div id="out"></div></main>
 <script>
 const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null;
+function listen(){
+  const mic=document.getElementById('mic');
+  if(!SR){alert('Голосовой ввод не поддерживается этим браузером. Откройте сайт в Chrome, Edge или Safari.');return}
+  if(rec){rec.stop();return}
+  rec=new SR();
+  rec.lang={ru:'ru-RU',en:'en-US',ar:'ar-SA'}[lang.value]||'ru-RU';
+  rec.interimResults=true;
+  rec.onstart=()=>{mic.classList.add('on');q.placeholder='Говорите…'};
+  rec.onresult=e=>{q.value=Array.from(e.results).map(r=>r[0].transcript).join('')};
+  rec.onerror=e=>{if(e.error=='not-allowed')alert('Разрешите доступ к микрофону в настройках браузера (значок слева от адреса сайта).')};
+  rec.onend=()=>{mic.classList.remove('on');q.placeholder='Тема: например, терпение, родители, милостыня';rec=null;if(q.value.trim())go()};
+  rec.start();
+}
 async function go(){
   const q=document.getElementById('q').value,l=lang.value,k=kind.value,out=document.getElementById('out');
   out.innerHTML='<p class="m">Ищу…</p>';
