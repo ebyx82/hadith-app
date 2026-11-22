@@ -1,5 +1,9 @@
 <!doctype html><html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Поиск по Корану и Сунне</title>
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0f3d2e">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" type="image/png" href="/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Коран и Сунна">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lora:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -163,4 +167,5 @@ async function goPage(n,scroll=true){
 }
 function go(){const v=q.value.trim();if(!v)return;curQ=v;goPage(0,false)}
 function cp(i,b){const x=items[i];navigator.clipboard.writeText(`${x.ar?x.ar+'\n':''}${x.text}\n— ${x.source}, ${x.ref}`).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)})}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 </script></body></html>
