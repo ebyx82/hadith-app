@@ -26,17 +26,21 @@ def make_url(kind, source, ref):
 NAME = {v: k for k, v in SLUG.items()}
 NAME["quran"] = "Коран"
 
-def search(q, lang, srcs, limit=40):
+PAGE = 40
+
+def search(q, lang, srcs, offset=0, limit=PAGE):
     m = fts_query(q)
-    if not m: return []
+    if not m: return 0, []
     names = [NAME[x] for x in srcs if x in NAME]
-    sql = ("SELECT d.kind,d.source,d.ref,d.grade,d.text FROM fts JOIN docs d ON d.id=fts.rowid "
-           "WHERE fts MATCH ? AND d.lang=?" + (f" AND d.source IN ({','.join('?'*len(names))})" if names else "")
-           + " ORDER BY bm25(fts) LIMIT ?")
-    args = [m, lang] + names + [limit]
+    where = "WHERE fts MATCH ? AND d.lang=?" + (f" AND d.source IN ({','.join('?'*len(names))})" if names else "")
+    base = "FROM fts JOIN docs d ON d.id=fts.rowid " + where
+    args = [m, lang] + names
     db = sqlite3.connect("hadith.db")
-    rows = db.execute(sql, args).fetchall(); db.close()
-    return [dict(kind=a, source=b, ref=c, grade=d, text=e, url=make_url(a, b, c)) for a, b, c, d, e in rows]
+    total = db.execute("SELECT COUNT(*) " + base, args).fetchone()[0]
+    rows = db.execute("SELECT d.kind,d.source,d.ref,d.grade,d.text " + base + " ORDER BY bm25(fts) LIMIT ? OFFSET ?",
+                      args + [limit, offset]).fetchall()
+    db.close()
+    return total, [dict(kind=a, source=b, ref=c, grade=d, text=e, url=make_url(a, b, c)) for a, b, c, d, e in rows]
 
 class H(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -44,7 +48,8 @@ class H(BaseHTTPRequestHandler):
         if u.path == "/api/search":
             p = parse_qs(u.query)
             srcs = [x for x in p.get("src", [""])[0].split(",") if x]
-            res = search(p.get("q", [""])[0], p.get("lang", ["ru"])[0], srcs)
+            total, rows = search(p.get("q", [""])[0], p.get("lang", ["ru"])[0], srcs, int(p.get("offset", ["0"])[0]))
+            res = {"total": total, "results": rows}
             body, ct = json.dumps(res, ensure_ascii=False).encode(), "application/json; charset=utf-8"
         else:
             body, ct = open("index.html" if os.path.exists("index.html") else "static/index.html", "rb").read(), "text/html; charset=utf-8"
