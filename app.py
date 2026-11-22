@@ -11,6 +11,18 @@ def fts_query(q):
         terms.append(f'"{w}"*')
     return " OR ".join(terms)
 
+SLUG = {"Сахих аль-Бухари": "bukhari", "Сахих Муслим": "muslim", "Сунан Абу Дауда": "abudawud",
+        "Джами ат-Тирмизи": "tirmidhi", "Сунан ан-Насаи": "nasai", "Сунан Ибн Маджа": "ibnmajah"}
+
+def make_url(kind, source, ref):
+    if kind == "quran":
+        m = re.match(r"(\d+):(\d+)", ref)
+        return f"https://quran.com/{m.group(1)}/{m.group(2)}" if m else ""
+    slug = SLUG.get(source)
+    if not slug: return ""
+    m = re.fullmatch(r"№(\d+)", ref)
+    return f"https://sunnah.com/{slug}:{m.group(1)}" if m else f"https://sunnah.com/{slug}"
+
 def search(q, lang, kind, limit=40):
     m = fts_query(q)
     if not m: return []
@@ -19,7 +31,7 @@ def search(q, lang, kind, limit=40):
     args = [m, lang] + ([kind] if kind else []) + [limit]
     db = sqlite3.connect("hadith.db")
     rows = db.execute(sql, args).fetchall(); db.close()
-    return [dict(kind=a, source=b, ref=c, grade=d, text=e) for a, b, c, d, e in rows]
+    return [dict(kind=a, source=b, ref=c, grade=d, text=e, url=make_url(a, b, c)) for a, b, c, d, e in rows]
 
 class H(BaseHTTPRequestHandler):
     def do_GET(self):

@@ -45,6 +45,7 @@ main{max-width:780px;margin:-48px auto 0;padding:0 16px 48px;position:relative}
 .gr.s{background:color-mix(in srgb,#2e9e6b 16%,transparent);color:#2e9e6b}.gr.d{background:color-mix(in srgb,#c0392b 14%,transparent);color:#c0392b}
 .txt{font-size:17px}
 .txt.ar{direction:rtl;text-align:right;font:400 26px/2 Amiri,serif}
+.lk{color:var(--ac);font-size:13px;text-decoration:none;margin-left:14px}.lk:hover{text-decoration:underline}
 .cp{border:0;background:none;color:var(--mu);font-size:13px;cursor:pointer;margin-top:8px;padding:0}.cp:hover{color:var(--ac)}
 .sk{height:88px;border-radius:14px;margin-top:14px;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sh 1.2s infinite}
 @keyframes sh{to{background-position:-200% 0}}
@@ -105,7 +106,7 @@ async function go(){
  items.length=0;r.forEach(x=>items.push(x));
  out.innerHTML=r.length?`<p class="info">Найдено: ${r.length}</p>`+r.map((x,i)=>`<div class="c ${x.kind=='hadith'?'h':''}">
   <div class="top"><span class="tag">${esc(x.source)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
-  <div class="txt ${L=='ar'?'ar':''}">${esc(x.text)}</div><button class="cp" onclick="cp(${i},this)">Копировать</button></div>`).join('')
+  <div class="txt ${L=='ar'?'ar':''}">${esc(x.text)}</div><button class="cp" onclick="cp(${i},this)">Копировать</button>${x.url?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">Проверить на ${x.kind=='quran'?'quran.com':'sunnah.com'} ↗</a>`:''}</div>`).join('')
  :'<p class="info">Ничего не найдено. Попробуйте другое слово, язык или фильтр.</p>';
 }
 function cp(i,b){const x=items[i];navigator.clipboard.writeText(`${x.text}\n— ${x.source}, ${x.ref}`).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)})}
