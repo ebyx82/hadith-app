@@ -54,7 +54,10 @@ main{max-width:780px;margin:-48px auto 0;padding:0 16px 48px;position:relative}
 .pg button:hover:not(:disabled){border-color:var(--ac);color:var(--ac)}
 .pg button.cur{background:var(--ac);border-color:var(--ac);color:#fff}
 .pg button:disabled{opacity:.4;cursor:default}.pg span{align-self:center;color:var(--mu)}
-.txt.tr{border-top:1px dashed var(--bd);margin-top:10px;padding-top:10px}
+.ao{border:1px solid var(--bd);background:var(--bg);color:var(--ac);font:500 13px Inter,sans-serif;padding:4px 12px;border-radius:999px;cursor:pointer;margin-bottom:10px}
+.ao:hover{border-color:var(--ac)}
+.ab{padding-bottom:12px;margin-bottom:12px;border-bottom:1px dashed var(--bd)}.ab[hidden]{display:none}
+.sal{font-family:Amiri,serif;font-size:1.15em}
 .cp{border:0;background:none;color:var(--mu);font-size:13px;cursor:pointer;margin-top:8px;padding:0}.cp:hover{color:var(--ac)}
 .sk{height:88px;border-radius:14px;margin-top:14px;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sh 1.2s infinite}
 @keyframes sh{to{background-position:-200% 0}}
@@ -86,6 +89,8 @@ footer{text-align:center;color:var(--mu);font-size:13px;margin-top:36px}
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const fx=s=>esc(s).replace(/ﷺ/g,'<span class="sal">ﷺ</span>');
+function tg(b){const d=b.nextElementSibling;d.hidden=!d.hidden;b.textContent=d.hidden?'Показать оригинал на арабском':'Скрыть арабский'}
 let L='ru';const S=new Set();
 function seg(id,set){$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;
  [...$(id).children].forEach(x=>x.classList.toggle('act',x===b));set(b.dataset.v);if(q.value.trim())go()}}
@@ -110,7 +115,7 @@ function gcls(g){g=(g||'').toLowerCase();return g.includes('sahih')||g.includes(
 const items=[];let curQ='',total=0,page=0,size=20;
 const card=(x,i)=>`<div class="c ${x.kind=='hadith'?'h':''}">
  <div class="top"><span class="tag">${esc(x.source)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
- ${x.ar?`<div class="txt ar">${esc(x.ar)}</div>`:''}<div class="txt ${L=='ar'?'ar':''} ${x.ar?'tr':''}">${esc(x.text)}</div><button class="cp" onclick="cp(${i},this)">Копировать</button>${x.url?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">Проверить на ${x.kind=='quran'?'quran.com':'sunnah.com'} ↗</a>`:''}</div>`;
+ ${x.ar?`<button class="ao" onclick="tg(this)">Показать оригинал на арабском</button><div class="txt ar ab" hidden>${esc(x.ar)}</div>`:''}<div class="txt ${L=='ar'?'ar':''}">${fx(x.text)}</div><button class="cp" onclick="cp(${i},this)">Копировать</button>${x.url?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">Проверить на ${x.kind=='quran'?'quran.com':'sunnah.com'} ↗</a>`:''}</div>`;
 const fetchPage=async n=>(await fetch(`/api/search?q=${encodeURIComponent(curQ)}&lang=${L}&src=${[...S].join(',')}&offset=${n*size}`)).json();
 function pager(){
  const pages=Math.ceil(total/size);if(pages<2)return '';
