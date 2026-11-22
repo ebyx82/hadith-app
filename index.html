@@ -54,6 +54,7 @@ main{max-width:780px;margin:-48px auto 0;padding:0 16px 48px;position:relative}
 .pg button:hover:not(:disabled){border-color:var(--ac);color:var(--ac)}
 .pg button.cur{background:var(--ac);border-color:var(--ac);color:#fff}
 .pg button:disabled{opacity:.4;cursor:default}.pg span{align-self:center;color:var(--mu)}
+.txt.tr{border-top:1px dashed var(--bd);margin-top:10px;padding-top:10px}
 .cp{border:0;background:none;color:var(--mu);font-size:13px;cursor:pointer;margin-top:8px;padding:0}.cp:hover{color:var(--ac)}
 .sk{height:88px;border-radius:14px;margin-top:14px;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sh 1.2s infinite}
 @keyframes sh{to{background-position:-200% 0}}
@@ -109,7 +110,7 @@ function gcls(g){g=(g||'').toLowerCase();return g.includes('sahih')||g.includes(
 const items=[];let curQ='',total=0,page=0,size=20;
 const card=(x,i)=>`<div class="c ${x.kind=='hadith'?'h':''}">
  <div class="top"><span class="tag">${esc(x.source)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
- <div class="txt ${L=='ar'?'ar':''}">${esc(x.text)}</div><button class="cp" onclick="cp(${i},this)">Копировать</button>${x.url?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">Проверить на ${x.kind=='quran'?'quran.com':'sunnah.com'} ↗</a>`:''}</div>`;
+ ${x.ar?`<div class="txt ar">${esc(x.ar)}</div>`:''}<div class="txt ${L=='ar'?'ar':''} ${x.ar?'tr':''}">${esc(x.text)}</div><button class="cp" onclick="cp(${i},this)">Копировать</button>${x.url?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">Проверить на ${x.kind=='quran'?'quran.com':'sunnah.com'} ↗</a>`:''}</div>`;
 const fetchPage=async n=>(await fetch(`/api/search?q=${encodeURIComponent(curQ)}&lang=${L}&src=${[...S].join(',')}&offset=${n*size}`)).json();
 function pager(){
  const pages=Math.ceil(total/size);if(pages<2)return '';
@@ -131,5 +132,5 @@ async function goPage(n,scroll=true){
  catch(e){out.innerHTML='<p class="info">Не удалось выполнить поиск. Сервер, возможно, просыпается — подождите минуту и повторите.</p>'}
 }
 function go(){const v=q.value.trim();if(!v)return;curQ=v;goPage(0,false)}
-function cp(i,b){const x=items[i];navigator.clipboard.writeText(`${x.text}\n— ${x.source}, ${x.ref}`).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)})}
+function cp(i,b){const x=items[i];navigator.clipboard.writeText(`${x.ar?x.ar+'\n':''}${x.text}\n— ${x.source}, ${x.ref}`).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)})}
 </script></body></html>

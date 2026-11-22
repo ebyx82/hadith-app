@@ -37,10 +37,17 @@ def search(q, lang, srcs, offset=0, limit=PAGE):
     args = [m, lang] + names
     db = sqlite3.connect("hadith.db")
     total = db.execute("SELECT COUNT(*) " + base, args).fetchone()[0]
-    rows = db.execute("SELECT d.kind,d.source,d.ref,d.grade,d.text " + base + " ORDER BY bm25(fts) LIMIT ? OFFSET ?",
+    rows = db.execute("SELECT d.kind,d.source,d.ref,d.grade,d.text,d.key " + base + " ORDER BY bm25(fts) LIMIT ? OFFSET ?",
                       args + [limit, offset]).fetchall()
+    out = []
+    for a, b, c, d, e, k in rows:
+        item = dict(kind=a, source=b, ref=c, grade=d, text=e, url=make_url(a, b, c))
+        if lang != "ar":
+            ar = db.execute("SELECT text FROM docs WHERE kind=? AND source=? AND lang='ar' AND key=?", (a, b, k)).fetchone()
+            if ar: item["ar"] = ar[0]
+        out.append(item)
     db.close()
-    return total, [dict(kind=a, source=b, ref=c, grade=d, text=e, url=make_url(a, b, c)) for a, b, c, d, e in rows]
+    return total, out
 
 class H(BaseHTTPRequestHandler):
     def do_GET(self):
