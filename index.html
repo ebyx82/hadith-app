@@ -49,6 +49,11 @@ main{max-width:780px;margin:-48px auto 0;padding:0 16px 48px;position:relative}
 .txt{font-size:17px}
 .txt.ar{direction:rtl;text-align:right;font:400 26px/2 Amiri,serif}
 .lk{color:var(--ac);font-size:13px;text-decoration:none;margin-left:14px}.lk:hover{text-decoration:underline}
+.pg{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:24px}
+.pg button{min-width:40px;height:40px;padding:0 12px;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:10px;font:500 15px Inter,sans-serif;cursor:pointer}
+.pg button:hover:not(:disabled){border-color:var(--ac);color:var(--ac)}
+.pg button.cur{background:var(--ac);border-color:var(--ac);color:#fff}
+.pg button:disabled{opacity:.4;cursor:default}.pg span{align-self:center;color:var(--mu)}
 .cp{border:0;background:none;color:var(--mu);font-size:13px;cursor:pointer;margin-top:8px;padding:0}.cp:hover{color:var(--ac)}
 .sk{height:88px;border-radius:14px;margin-top:14px;background:linear-gradient(90deg,var(--card),var(--bd),var(--card));background-size:200% 100%;animation:sh 1.2s infinite}
 @keyframes sh{to{background-position:-200% 0}}
@@ -101,27 +106,30 @@ function listen(){
  rec.start();
 }
 function gcls(g){g=(g||'').toLowerCase();return g.includes('sahih')||g.includes('صحيح')?'s':(g.includes('daif')||g.includes('da\'if')||g.includes('ضعيف')?'d':'')}
-const items=[];let curQ='',total=0;
+const items=[];let curQ='',total=0,page=0,size=20;
 const card=(x,i)=>`<div class="c ${x.kind=='hadith'?'h':''}">
  <div class="top"><span class="tag">${esc(x.source)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
  <div class="txt ${L=='ar'?'ar':''}">${esc(x.text)}</div><button class="cp" onclick="cp(${i},this)">Копировать</button>${x.url?`<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">Проверить на ${x.kind=='quran'?'quran.com':'sunnah.com'} ↗</a>`:''}</div>`;
-const fetchPage=async off=>(await fetch(`/api/search?q=${encodeURIComponent(curQ)}&lang=${L}&src=${[...S].join(',')}&offset=${off}`)).json();
+const fetchPage=async n=>(await fetch(`/api/search?q=${encodeURIComponent(curQ)}&lang=${L}&src=${[...S].join(',')}&offset=${n*size}`)).json();
+function pager(){
+ const pages=Math.ceil(total/size);if(pages<2)return '';
+ const nums=new Set([0,pages-1]);for(let i=page-2;i<=page+2;i++)if(i>=0&&i<pages)nums.add(i);
+ const list=[...nums].sort((a,b)=>a-b);let h=`<button ${page==0?'disabled':''} onclick="goPage(${page-1})" aria-label="Назад">‹</button>`,prev=-1;
+ for(const n of list){if(n-prev>1)h+='<span>…</span>';h+=`<button class="${n==page?'cur':''}" onclick="goPage(${n})">${n+1}</button>`;prev=n}
+ return `<div class="pg">${h}<button ${page==pages-1?'disabled':''} onclick="goPage(${page+1})" aria-label="Вперёд">›</button></div>`;
+}
 function render(){
  const out=$('out');
  if(!items.length){out.innerHTML='<p class="info">Ничего не найдено. Попробуйте другое слово, язык или книги.</p>';return}
- out.innerHTML=`<p class="info">Найдено: ${total} · показано: ${items.length}</p>`+items.map(card).join('')+
-  (items.length<total?'<div style="text-align:center;margin-top:18px"><button class="go" id="more" onclick="more()">Показать ещё</button></div>':'');
+ const pages=Math.ceil(total/size);
+ out.innerHTML=`<p class="info">Найдено: ${total} · страница ${page+1} из ${pages}</p>`+items.map(card).join('')+pager();
 }
-async function go(){
- const v=q.value.trim(),out=$('out');if(!v)return;
- curQ=v;out.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
- try{const r=await fetchPage(0);items.length=0;items.push(...r.results);total=r.total;render()}
+async function goPage(n,scroll=true){
+ const out=$('out');out.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';
+ try{const r=await fetchPage(n);size=r.page_size||size;items.length=0;items.push(...r.results);total=r.total;page=n;render();
+  if(scroll)out.scrollIntoView({behavior:'smooth',block:'start'})}
  catch(e){out.innerHTML='<p class="info">Не удалось выполнить поиск. Сервер, возможно, просыпается — подождите минуту и повторите.</p>'}
 }
-async function more(){
- const b=$('more');b.textContent='Загрузка…';b.disabled=true;
- try{const r=await fetchPage(items.length);items.push(...r.results);render()}
- catch(e){b.textContent='Ошибка, повторить';b.disabled=false}
-}
+function go(){const v=q.value.trim();if(!v)return;curQ=v;goPage(0,false)}
 function cp(i,b){const x=items[i];navigator.clipboard.writeText(`${x.text}\n— ${x.source}, ${x.ref}`).then(()=>{b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)})}
 </script></body></html>

@@ -26,7 +26,7 @@ def make_url(kind, source, ref):
 NAME = {v: k for k, v in SLUG.items()}
 NAME["quran"] = "Коран"
 
-PAGE = 40
+PAGE = 20
 
 def search(q, lang, srcs, offset=0, limit=PAGE):
     m = fts_query(q)
@@ -49,7 +49,7 @@ class H(BaseHTTPRequestHandler):
             p = parse_qs(u.query)
             srcs = [x for x in p.get("src", [""])[0].split(",") if x]
             total, rows = search(p.get("q", [""])[0], p.get("lang", ["ru"])[0], srcs, int(p.get("offset", ["0"])[0]))
-            res = {"total": total, "results": rows}
+            res = {"total": total, "results": rows, "page_size": PAGE}
             body, ct = json.dumps(res, ensure_ascii=False).encode(), "application/json; charset=utf-8"
         else:
             body, ct = open("index.html" if os.path.exists("index.html") else "static/index.html", "rb").read(), "text/html; charset=utf-8"
