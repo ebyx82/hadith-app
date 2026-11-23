@@ -110,50 +110,58 @@ def api_surah(p):
 
 def sec_names(src, lang):
     names, ar = {}, {}
-    for l in dict.fromkeys([lang, "en", "ar"]):
-        for r in q("SELECT sec,name FROM sections WHERE source=? AND lang=?", (src, l)):
-            names.setdefault(r["sec"], r["name"])
+    for r in q("SELECT sec,name FROM sections WHERE source=? AND lang=?", (src, lang)):
+        names[r["sec"]] = r["name"]
     for r in q("SELECT sec,name FROM sections WHERE source=? AND lang='ar'", (src,)):
         ar[r["sec"]] = r["name"]
     return names, ar
 
+def has_tr(lang):
+    return ("AND EXISTS (SELECT 1 FROM docs t WHERE t.kind='hadith' AND t.source=d.source AND t.lang=? AND t.key=d.key)", [lang])
+
 def api_chapters(p):
-    src = NAME.get(p.get("src")); lang = p.get("lang", "ru")
+    src = NAME.get(p.get("src")); lang = p.get("lang", "ru"); ru_only = p.get("ru_only") == "1"
     names, ar = sec_names(src, lang)
+    cond, extra = has_tr(lang) if ru_only else ("", [])
     out = []
-    for r in q("SELECT sec, COUNT(*) c FROM docs WHERE source=? AND lang='ar' AND sec IS NOT NULL GROUP BY sec ORDER BY sec", (src,)):
+    for r in q(f"SELECT d.sec, COUNT(*) c FROM docs d WHERE d.kind='hadith' AND d.source=? AND d.lang='ar' AND d.sec IS NOT NULL {cond} GROUP BY d.sec ORDER BY d.sec", [src] + extra):
         sec = r["sec"]; it = {"sec": sec, "name": names.get(sec), "count": r["c"]}
         if ar.get(sec) and ar.get(sec) != it["name"]: it["ar"] = ar[sec]
-        if not it["name"]:   # запасной вариант: начало первого хадиса главы
-            for l in dict.fromkeys([lang, "en", "ar"]):
-                t = q("SELECT text FROM docs WHERE kind='hadith' AND source=? AND lang=? AND sec=? ORDER BY num LIMIT 1", (src, l, sec))
-                if t: it["preview"] = t[0]["text"][:80].strip() + "…"; break
+        t = q("SELECT text FROM docs WHERE kind='hadith' AND source=? AND lang=? AND sec=? ORDER BY num LIMIT 1", (src, lang, sec))
+        if not t and not ru_only: t = q("SELECT text FROM docs WHERE kind='hadith' AND source=? AND lang='ar' AND sec=? ORDER BY num LIMIT 1", (src, sec))
+        if not it["name"] and t: it["preview"] = t[0]["text"][:80].strip() + "…"
         out.append(it)
     return out
 
+def api_bookinfo(p):
+    res = {}
+    for r in q("SELECT source, lang, COUNT(*) c FROM docs WHERE kind='hadith' GROUP BY source, lang"):
+        res.setdefault(SLUG.get(r["source"], r["source"]), {})[r["lang"]] = r["c"]
+    return res
+
 def api_hadiths(p):
-    src = NAME.get(p.get("src")); lang = p.get("lang", "ru"); page = max(0, int(p.get("page", 0))); size = 20
-    where, args = "kind='hadith' AND source=? AND lang='ar'", [src]
-    if p.get("sec", "").isdigit(): where += " AND sec=?"; args.append(int(p["sec"]))
-    if p.get("num"): where += " AND key=?"; args.append("№" + p["num"].strip())
-    total = q(f"SELECT COUNT(*) c FROM docs WHERE {where}", args)[0]["c"]
-    rows = q(f"SELECT ref,key,grade,text FROM docs WHERE {where} ORDER BY num LIMIT ? OFFSET ?", args + [size, page * size])
+    src = NAME.get(p.get("src")); lang = p.get("lang", "ru"); ru_only = p.get("ru_only") == "1"
+    page = max(0, int(p.get("page", 0))); size = 20
+    where, args = "d.kind='hadith' AND d.source=? AND d.lang='ar'", [src]
+    if p.get("sec", "").isdigit(): where += " AND d.sec=?"; args.append(int(p["sec"]))
+    if p.get("num"): where += " AND d.key=?"; args.append("№" + p["num"].strip())
+    if ru_only:
+        cond, extra = has_tr(lang); where += " " + cond; args += extra
+    total = q(f"SELECT COUNT(*) c FROM docs d WHERE {where}", args)[0]["c"]
+    rows = q(f"SELECT d.ref,d.key,d.grade,d.text FROM docs d WHERE {where} ORDER BY d.num LIMIT ? OFFSET ?", args + [size, page * size])
     items = []
     for r in rows:
         it = dict(ref=r["ref"], ar=r["text"], grade=r["grade"], url=make_url("hadith", src, r["ref"]))
-        for l in dict.fromkeys([lang, "en"]):
-            t = q("SELECT text,grade FROM docs WHERE kind='hadith' AND source=? AND lang=? AND key=?", (src, l, r["key"]))
-            if t:
-                it["tr"], it["trlang"] = t[0]["text"], l
-                it["grade"] = it["grade"] or t[0]["grade"]
-                break
+        t = q("SELECT text,grade FROM docs WHERE kind='hadith' AND source=? AND lang=? AND key=?", (src, lang, r["key"]))
+        if t:
+            it["tr"] = t[0]["text"]; it["grade"] = it["grade"] or t[0]["grade"]
         items.append(it)
     chapter = None
     if p.get("sec", "").isdigit():
         chapter = sec_names(src, lang)[0].get(int(p["sec"])) or f"Глава {p['sec']}"
     return {"total": total, "page_size": size, "items": items, "chapter": chapter}
 
-API = {"/api/ping": lambda p: {"ok": True}, "/api/surahs": api_surahs, "/api/surah": api_surah, "/api/chapters": api_chapters, "/api/hadiths": api_hadiths}
+API = {"/api/ping": lambda p: {"ok": True}, "/api/bookinfo": api_bookinfo, "/api/surahs": api_surahs, "/api/surah": api_surah, "/api/chapters": api_chapters, "/api/hadiths": api_hadiths}
 
 class H(BaseHTTPRequestHandler):
     def do_GET(self):

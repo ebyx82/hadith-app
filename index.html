@@ -343,24 +343,30 @@ function mark(){document.querySelectorAll('.ay').forEach(e=>{const on=!!cur&&+e.
  if(cur){const el=document.querySelector('.ay.playing');if(el)el.scrollIntoView({behavior:'smooth',block:'center'})}}
 
 /* ---------- ХАДИСЫ ---------- */
-function viewHadith(){bar('Книги хадисов','#/');V.innerHTML=`<div class="wrap" style="padding-top:6px">${BOOKS.map(([s,n,a])=>`<a class="row" href="#/books/${s}"><div class="nb">${ic('book')}</div><div class="mid"><b>${n}</b><span>арабский текст и перевод</span></div><span class="ra">${a}</span></a>`).join('')}</div>`}
+async function viewHadith(){bar('Книги хадисов','#/');
+ V.innerHTML=`<div class="wrap" style="padding-top:6px">${BOOKS.map(([s,n,a])=>`<a class="row" href="#/books/${s}"><div class="nb">${ic('book')}</div><div class="mid"><b>${n}</b><span id="bi-${s}">арабский текст и русский перевод</span></div><span class="ra">${a}</span></a>`).join('')}</div>`;
+ try{const bi=await api('/api/bookinfo');BOOKS.forEach(([s])=>{const e=$('bi-'+s),x=bi[s]||{};if(!e)return;const ar=x.ar||0,ru=x.ru||0;
+  e.textContent=ru?`русский перевод: ${ru.toLocaleString('ru')} из ${ar.toLocaleString('ru')} хадисов`:'нет русского перевода (только арабский)'})}catch(e){}}
+const RUO=()=>store.get('ruonly',true)?1:0;
+function setRU(v){store.set('ruonly',!!v);route()}
+const ruToggle=()=>`<label class="chk"><input type="checkbox" ${RUO()?'checked':''} onchange="setRU(this.checked)"> Только хадисы с русским переводом</label>`;
 let CH=[];
 async function viewBook(slug){const b=BOOKS.find(x=>x[0]==slug);if(!b){location.hash='#/hadith';return}bar(b[1],'#/hadith');
  V.innerHTML=`<div class="wrap"><div class="jump"><input class="fi" id="jn" type="number" inputmode="numeric" placeholder="Перейти к хадису №" onkeydown="if(event.key=='Enter')jump('${slug}')"><button class="go" onclick="jump('${slug}')">Найти</button></div>
- <input class="fi" id="cf" placeholder="Найти главу или тему по названию" oninput="drawCh('${slug}')">
+ <input class="fi" id="cf" placeholder="Найти главу или тему по названию" oninput="drawCh('${slug}')">${ruToggle()}
  <a class="row" href="#/books/${slug}/all"><div class="nb">${ic('book')}</div><div class="mid"><b>Все хадисы подряд</b><span>листать по страницам</span></div></a><div id="chs">${SK}</div></div>`;
- try{CH=await api(`/api/chapters?src=${slug}&lang=${TL()}`);drawCh(slug)}catch(e){$('chs').innerHTML=ERR}}
+ try{CH=await api(`/api/chapters?src=${slug}&lang=ru&ru_only=${RUO()}`);drawCh(slug)}catch(e){$('chs').innerHTML=ERR}}
 function drawCh(slug){const f=($('cf').value||'').trim().toLowerCase();
  const list=CH.filter(x=>!f||String(x.sec)==f||(x.name||'').toLowerCase().includes(f)||(x.ar||'').includes(f));
  $('chs').innerHTML=CH.length?'<h3 class="hs">Главы и темы</h3>'+(list.map(x=>`<a class="row" href="#/books/${slug}/${x.sec}"><div class="nb">${x.sec}</div><div class="mid"><b>${esc(x.name||'Глава '+x.sec)}</b><span>${x.count} хадисов${x.preview?' · «'+esc(x.preview)+'»':''}</span></div>${x.ar?`<span class="ra" style="font-size:20px">${esc(x.ar)}</span>`:''}</a>`).join('')||'<p class="info">Ничего не найдено</p>'):''}
 function jump(s){const v=$('jn').value.trim();if(v)location.hash=`#/books/${s}/n${v}`}
 const hcard=(x,i,src)=>`<div class="c h" style="--i:${Math.min(i,8)}"><div class="top"><span class="tag">${esc(src)}</span><span class="ref">${esc(x.ref)}</span>${x.grade?`<span class="gr ${gcls(x.grade)}">${esc(x.grade)}</span>`:''}</div>
- <div class="txt ar">${esc(x.ar)}</div>${x.tr?`<div class="txt tr2">${fx(x.tr)}${x.trlang&&x.trlang!=TL()?' <span class="ref">(перевод на английском)</span>':''}</div>`:'<div class="txt tr2 mu">Перевод отсутствует в источнике</div>'}
+ <div class="txt ar">${esc(x.ar)}</div>${x.tr?`<div class="txt tr2">${fx(x.tr)}</div>`:'<div class="txt tr2 mu">Перевод на русский отсутствует в источнике</div>'}
  <button class="cp" onclick="cp(${i},this)">Копировать</button>${lk({...x,kind:'hadith'})}</div>`;
 async function viewList(slug,spec,page=0){const b=BOOKS.find(x=>x[0]==slug);if(!b){location.hash='#/hadith';return}bar(b[1],`#/books/${slug}`);V.innerHTML=SK;
  const q=spec=='all'?'':/^n\d+$/.test(spec)?`&num=${spec.slice(1)}`:`&sec=${spec}`;
- try{const j=await api(`/api/hadiths?src=${slug}&lang=${TL()}&page=${page}${q}`);ITEMS=j.items.map(x=>({...x,src:b[1]}));const pages=Math.ceil(j.total/j.page_size);
-  V.innerHTML=`<div class="wrap">${j.chapter?`<h3 class="hs" style="margin-top:18px">${esc(j.chapter)}</h3>`:''}<p class="info">${j.total?`Хадисов: ${j.total}${pages>1?` · страница ${page+1} из ${pages}`:''}`:''}</p>${ITEMS.map((x,i)=>hcard(x,i,b[1])).join('')||'<p class="info">Ничего не найдено</p>'}${pager(page,j.total,j.page_size,`viewList('${slug}','${spec}',%n)`)}</div>`;if(page)window.scrollTo(0,0)}
+ try{const j=await api(`/api/hadiths?src=${slug}&lang=ru&ru_only=${RUO()}&page=${page}${q}`);ITEMS=j.items.map(x=>({...x,src:b[1]}));const pages=Math.ceil(j.total/j.page_size);
+  V.innerHTML=`<div class="wrap">${j.chapter?`<h3 class="hs" style="margin-top:18px">${esc(j.chapter)}</h3>`:''}${ruToggle()}<p class="info">${j.total?`Хадисов: ${j.total}${pages>1?` · страница ${page+1} из ${pages}`:''}`:''}</p>${ITEMS.map((x,i)=>hcard(x,i,b[1])).join('')||`<p class="info">${RUO()?'Нет хадисов с русским переводом. Выключите галочку выше, чтобы увидеть арабский текст.':'Ничего не найдено'}</p>`}${pager(page,j.total,j.page_size,`viewList('${slug}','${spec}',%n)`)}</div>`;if(page)window.scrollTo(0,0)}
  catch(e){V.innerHTML=ERR}}
 
 /* ---------- ПОИСК ---------- */
